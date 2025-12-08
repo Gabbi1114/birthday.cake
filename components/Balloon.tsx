@@ -1,6 +1,6 @@
-import React, { useRef, useMemo } from 'react';
-import { useFrame } from '@react-three/fiber';
-import * as THREE from 'three';
+import React, { useRef, useMemo } from "react";
+import { useFrame } from "@react-three/fiber";
+import * as THREE from "three";
 
 interface BalloonProps {
   position: [number, number, number];
@@ -11,7 +11,7 @@ interface BalloonProps {
 const Balloon: React.FC<BalloonProps> = ({ position, color, scale = 1 }) => {
   const groupRef = useRef<THREE.Group>(null);
   const offset = useMemo(() => Math.random() * 100, []);
-  
+
   // Random sway parameters
   const speed = useMemo(() => 0.5 + Math.random() * 0.5, []);
   const range = useMemo(() => 0.05 + Math.random() * 0.05, []);
@@ -19,10 +19,10 @@ const Balloon: React.FC<BalloonProps> = ({ position, color, scale = 1 }) => {
   useFrame((state) => {
     if (groupRef.current) {
       const time = state.clock.elapsedTime + offset;
-      
+
       // Bobbing motion (Y-axis)
       groupRef.current.position.y = position[1] + Math.sin(time * speed) * 0.5;
-      
+
       // Gentle swaying rotation
       groupRef.current.rotation.z = Math.sin(time * speed * 0.5) * range;
       groupRef.current.rotation.x = Math.cos(time * speed * 0.3) * range;
@@ -46,11 +46,7 @@ const Balloon: React.FC<BalloonProps> = ({ position, color, scale = 1 }) => {
       {/* Balloon Body (Oval Sphere) */}
       <mesh position={[0, 0, 0]} scale={[1, 1.25, 1]} castShadow receiveShadow>
         <sphereGeometry args={[1, 16, 16]} />
-        <meshStandardMaterial 
-            color={color} 
-            roughness={0.2} 
-            metalness={0.3}
-        />
+        <meshStandardMaterial color={color} roughness={0.2} metalness={0.3} />
       </mesh>
     </group>
   );

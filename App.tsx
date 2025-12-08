@@ -51,7 +51,7 @@ const App: React.FC = () => {
       const bufferLength = analyser.frequencyBinCount;
       const frequencyData = new Uint8Array(bufferLength);
       const timeData = new Uint8Array(analyser.fftSize);
-      
+
       // Track sustained blowing - require consistent high levels
       let sustainedBlowCount = 0;
       const requiredSustainedFrames = 3; // Must maintain for 3 frames (~50ms at 60fps)
@@ -85,25 +85,26 @@ const App: React.FC = () => {
         // Threshold increased significantly to require hard blowing
         const lowFreqThreshold = 180; // High low-frequency requirement
         const amplitudeThreshold = 60; // High amplitude requirement
-        
+
         // Both conditions must be met for sustained blow detection
-        const isStrongBlow = lowFreqAverage > lowFreqThreshold && 
-                            lowFreqMax > 200 && 
-                            timeMax > amplitudeThreshold;
+        const isStrongBlow =
+          lowFreqAverage > lowFreqThreshold &&
+          lowFreqMax > 200 &&
+          timeMax > amplitudeThreshold;
 
         if (isStrongBlow) {
           sustainedBlowCount++;
           // Require sustained blowing for multiple frames to avoid false triggers
           if (sustainedBlowCount >= requiredSustainedFrames) {
-          setCandlesBlownOut(true);
-          // We can optionally stop listening here, or keep listening.
-          // Stopping saves resources.
-          setIsListening(false);
-          if (audioContextRef.current) {
-            audioContextRef.current.close();
-            audioContextRef.current = null;
-          }
-          return;
+            setCandlesBlownOut(true);
+            // We can optionally stop listening here, or keep listening.
+            // Stopping saves resources.
+            setIsListening(false);
+            if (audioContextRef.current) {
+              audioContextRef.current.close();
+              audioContextRef.current = null;
+            }
+            return;
           }
         } else {
           // Reset counter if blow isn't sustained
