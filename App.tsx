@@ -37,8 +37,8 @@ const App: React.FC = () => {
       microphone.connect(analyser);
       // Increased FFT size for better frequency resolution
       analyser.fftSize = 512;
-      // More smoothing to filter out brief noises (talking, etc.)
-      analyser.smoothingTimeConstant = 0.8;
+      // Moderate smoothing to filter out brief noises while remaining responsive
+      analyser.smoothingTimeConstant = 0.5;
 
       audioContextRef.current = audioCtx;
       analyserRef.current = analyser;
@@ -54,7 +54,7 @@ const App: React.FC = () => {
 
       // Track sustained blowing - require consistent high levels
       let sustainedBlowCount = 0;
-      const requiredSustainedFrames = 3; // Must maintain for 3 frames (~50ms at 60fps)
+      const requiredSustainedFrames = 2; // Must maintain for 2 frames (~33ms at 60fps)
 
       const detectBlow = () => {
         if (!analyserRef.current) return;
@@ -82,14 +82,14 @@ const App: React.FC = () => {
 
         // Require BOTH high low-frequency content AND high amplitude
         // This filters out talking (which has higher frequencies) and weak sounds
-        // Threshold increased significantly to require hard blowing
-        const lowFreqThreshold = 180; // High low-frequency requirement
-        const amplitudeThreshold = 60; // High amplitude requirement
+        // Balanced thresholds - requires blowing but not too hard
+        const lowFreqThreshold = 140; // Moderate low-frequency requirement
+        const amplitudeThreshold = 45; // Moderate amplitude requirement
 
         // Both conditions must be met for sustained blow detection
         const isStrongBlow =
           lowFreqAverage > lowFreqThreshold &&
-          lowFreqMax > 200 &&
+          lowFreqMax > 160 &&
           timeMax > amplitudeThreshold;
 
         if (isStrongBlow) {
