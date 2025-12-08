@@ -82,14 +82,14 @@ const App: React.FC = () => {
 
         // Require BOTH high low-frequency content AND high amplitude
         // This filters out talking (which has higher frequencies) and weak sounds
-        // Balanced thresholds - requires blowing but not too hard
-        const lowFreqThreshold = 140; // Moderate low-frequency requirement
-        const amplitudeThreshold = 45; // Moderate amplitude requirement
+        // Lowered thresholds by 20% for easier blowing
+        const lowFreqThreshold = 112; // Reduced low-frequency requirement (20% lower)
+        const amplitudeThreshold = 36; // Reduced amplitude requirement (20% lower)
 
         // Both conditions must be met for sustained blow detection
         const isStrongBlow =
           lowFreqAverage > lowFreqThreshold &&
-          lowFreqMax > 160 &&
+          lowFreqMax > 128 &&
           timeMax > amplitudeThreshold;
 
         if (isStrongBlow) {
