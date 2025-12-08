@@ -114,36 +114,58 @@ const Candle: React.FC<CandleProps> = ({ position, isLit = true }) => {
 
   useFrame((state) => {
     const time = state.clock.elapsedTime;
+    const delta = state.clock.getDelta();
 
     // Handle Extinguishing Animation
     if (flameRef.current && lightRef.current) {
       if (!isLit) {
-        // Shrink flame
-        flameRef.current.scale.lerp(new THREE.Vector3(0, 0, 0), 0.1);
-        // Dim light
+        // Smooth shrink flame
+        flameRef.current.scale.lerp(
+          new THREE.Vector3(0, 0, 0),
+          0.15 + delta * 5
+        );
+        // Smooth dim light
         lightRef.current.intensity = THREE.MathUtils.lerp(
           lightRef.current.intensity,
           0,
-          0.1
+          0.15 + delta * 5
         );
       } else {
-        // Active flicker
+        // Active flicker with smoother transitions
         const flicker =
           Math.sin(time * 10) * 0.1 +
           Math.cos(time * 23) * 0.1 +
           Math.sin(time * 45) * 0.05;
 
-        // Target scale/intensity
+        // Target scale/intensity with smoother lerp
         const targetScale = 1 + flicker * 0.2;
         const currentScale = flameRef.current.scale.x;
-        const nextScale = THREE.MathUtils.lerp(currentScale, targetScale, 0.2);
+        const nextScale = THREE.MathUtils.lerp(
+          currentScale,
+          targetScale,
+          0.3 + delta * 10
+        );
 
         flameRef.current.scale.set(nextScale, nextScale, nextScale);
-        lightRef.current.intensity = 3.0 + flicker * 1.0;
+        lightRef.current.intensity = THREE.MathUtils.lerp(
+          lightRef.current.intensity,
+          3.0 + flicker * 1.0,
+          0.3 + delta * 10
+        );
 
-        // Jitter
-        flameRef.current.position.x = Math.sin(time * 15) * 0.02;
-        flameRef.current.position.z = Math.cos(time * 12) * 0.02;
+        // Smooth jitter
+        const targetX = Math.sin(time * 15) * 0.02;
+        const targetZ = Math.cos(time * 12) * 0.02;
+        flameRef.current.position.x = THREE.MathUtils.lerp(
+          flameRef.current.position.x,
+          targetX,
+          0.2 + delta * 8
+        );
+        flameRef.current.position.z = THREE.MathUtils.lerp(
+          flameRef.current.position.z,
+          targetZ,
+          0.2 + delta * 8
+        );
       }
     }
   });

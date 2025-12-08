@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useMemo, useState, Suspense } from "react";
-import { Canvas, useThree } from "@react-three/fiber";
+import { Canvas, useThree, useFrame } from "@react-three/fiber";
 import {
   OrbitControls,
   Stars,
@@ -25,26 +25,39 @@ const MESSAGE_ON_POLAROID =
 const CameraController: React.FC<{ viewMode: ViewMode }> = ({ viewMode }) => {
   const { camera } = useThree();
   const targetPos = useRef(new THREE.Vector3(0, 10, 25));
+  const targetLookAt = useRef(new THREE.Vector3(0, 2, 0));
 
   useEffect(() => {
     switch (viewMode) {
       case ViewMode.TOP:
         targetPos.current.set(0, 50, 0);
+        targetLookAt.current.set(0, 2, 0);
         break;
       case ViewMode.SIDE:
         targetPos.current.set(50, 0, 0);
+        targetLookAt.current.set(0, 2, 0);
         break;
       case ViewMode.ORBIT:
       default:
         targetPos.current.set(0, 20, 45);
+        targetLookAt.current.set(0, 2, 0);
         break;
     }
   }, [viewMode]);
 
-  useEffect(() => {
-    camera.position.copy(targetPos.current);
-    camera.lookAt(0, 2, 0);
-  }, [viewMode, camera]);
+  // Smooth camera transitions using useFrame
+  useFrame(() => {
+    // Smooth position transition
+    camera.position.lerp(targetPos.current, 0.08);
+    // Smooth look-at transition
+    const currentLookAt = new THREE.Vector3();
+    camera.getWorldDirection(currentLookAt);
+    currentLookAt.multiplyScalar(10).add(camera.position);
+
+    // Smoothly interpolate the look-at point
+    const smoothLookAt = currentLookAt.lerp(targetLookAt.current, 0.08);
+    camera.lookAt(smoothLookAt);
+  });
 
   return null;
 };
