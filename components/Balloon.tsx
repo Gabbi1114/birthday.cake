@@ -45,13 +45,11 @@ const Balloon: React.FC<BalloonProps> = ({ position, color, scale = 1 }) => {
 
       {/* Balloon Body (Oval Sphere) */}
       <mesh position={[0, 0, 0]} scale={[1, 1.25, 1]} castShadow receiveShadow>
-        <sphereGeometry args={[1, 32, 32]} />
-        <meshPhysicalMaterial 
+        <sphereGeometry args={[1, 16, 16]} />
+        <meshStandardMaterial 
             color={color} 
-            roughness={0.1} 
-            metalness={0.2}
-            clearcoat={1.0}
-            clearcoatRoughness={0.1}
+            roughness={0.2} 
+            metalness={0.3}
         />
       </mesh>
     </group>

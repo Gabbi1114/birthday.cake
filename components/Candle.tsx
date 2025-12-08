@@ -59,15 +59,15 @@ const SmokeParticle: React.FC<{ startPos: [number, number, number]; index: numbe
 
   return (
     <mesh ref={meshRef} position={[startPos[0], startPos[1], startPos[2]]} scale={[0.1, 0.1, 0.1]}>
-      <sphereGeometry args={[0.2, 8, 8]} />
+      <sphereGeometry args={[0.2, 6, 6]} />
       <meshBasicMaterial color="#333333" transparent opacity={0.6} depthWrite={false} />
     </mesh>
   );
 };
 
 const Smoke: React.FC = () => {
-  // Increased particle count for denser smoke
-  const particles = useMemo(() => Array.from({ length: 12 }), []);
+  // Reduced particle count for better performance
+  const particles = useMemo(() => Array.from({ length: 8 }), []);
   return (
     <group position={[0, 1.7, 0]}>
        {particles.map((_, i) => (

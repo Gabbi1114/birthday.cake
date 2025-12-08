@@ -37,8 +37,8 @@ const App: React.FC = () => {
       microphone.connect(analyser);
       // Increased FFT size for better frequency resolution
       analyser.fftSize = 512;
-      // Reduced smoothing for more responsive detection
-      analyser.smoothingTimeConstant = 0.1;
+      // More smoothing to filter out brief noises (talking, etc.)
+      analyser.smoothingTimeConstant = 0.8;
 
       audioContextRef.current = audioCtx;
       analyserRef.current = analyser;
@@ -51,6 +51,10 @@ const App: React.FC = () => {
       const bufferLength = analyser.frequencyBinCount;
       const frequencyData = new Uint8Array(bufferLength);
       const timeData = new Uint8Array(analyser.fftSize);
+      
+      // Track sustained blowing - require consistent high levels
+      let sustainedBlowCount = 0;
+      const requiredSustainedFrames = 3; // Must maintain for 3 frames (~50ms at 60fps)
 
       const detectBlow = () => {
         if (!analyserRef.current) return;
@@ -58,30 +62,39 @@ const App: React.FC = () => {
         analyserRef.current.getByteFrequencyData(frequencyData);
         analyserRef.current.getByteTimeDomainData(timeData);
 
-        // Focus on lower frequencies (0-100 Hz range) where blowing sounds are strongest
-        // Lower frequencies are in the first ~20% of the array
-        const lowFreqRange = Math.floor(bufferLength * 0.2);
+        // Focus on lower frequencies (0-150 Hz range) where blowing sounds are strongest
+        // Lower frequencies are in the first ~30% of the array
+        const lowFreqRange = Math.floor(bufferLength * 0.3);
         let lowFreqSum = 0;
+        let lowFreqMax = 0;
         for (let i = 0; i < lowFreqRange; i++) {
           lowFreqSum += frequencyData[i];
+          if (frequencyData[i] > lowFreqMax) lowFreqMax = frequencyData[i];
         }
         const lowFreqAverage = lowFreqSum / lowFreqRange;
 
-        // Calculate overall volume from time domain (more accurate for amplitude)
-        let timeSum = 0;
+        // Calculate peak amplitude from time domain (more accurate for strong blows)
+        let timeMax = 0;
         for (let i = 0; i < timeData.length; i++) {
           const amplitude = Math.abs(timeData[i] - 128);
-          timeSum += amplitude;
+          if (amplitude > timeMax) timeMax = amplitude;
         }
-        const timeAverage = timeSum / timeData.length;
 
-        // Combined detection: focus on low frequencies and overall amplitude
-        // Lower threshold (100) for better phone microphone sensitivity
-        // Weight low frequencies more heavily as blowing produces low-frequency sounds
-        const combinedThreshold =
-          (lowFreqAverage * 1.5 + timeAverage * 0.5) / 2;
+        // Require BOTH high low-frequency content AND high amplitude
+        // This filters out talking (which has higher frequencies) and weak sounds
+        // Threshold increased significantly to require hard blowing
+        const lowFreqThreshold = 180; // High low-frequency requirement
+        const amplitudeThreshold = 60; // High amplitude requirement
+        
+        // Both conditions must be met for sustained blow detection
+        const isStrongBlow = lowFreqAverage > lowFreqThreshold && 
+                            lowFreqMax > 200 && 
+                            timeMax > amplitudeThreshold;
 
-        if (combinedThreshold > 100) {
+        if (isStrongBlow) {
+          sustainedBlowCount++;
+          // Require sustained blowing for multiple frames to avoid false triggers
+          if (sustainedBlowCount >= requiredSustainedFrames) {
           setCandlesBlownOut(true);
           // We can optionally stop listening here, or keep listening.
           // Stopping saves resources.
@@ -91,6 +104,10 @@ const App: React.FC = () => {
             audioContextRef.current = null;
           }
           return;
+          }
+        } else {
+          // Reset counter if blow isn't sustained
+          sustainedBlowCount = Math.max(0, sustainedBlowCount - 1);
         }
 
         animationFrameRef.current = requestAnimationFrame(detectBlow);

@@ -112,7 +112,7 @@ const Scene: React.FC<SceneProps> = ({
       "#c0c0c0",
       CHOCOLATE_COLOR,
     ];
-    return Array.from({ length: 12 }).map((_, i) => {
+    return Array.from({ length: 8 }).map((_, i) => {
       // Position scattered around the back (semi-circle) to avoid blocking the front view
       // Camera is at +Z, so we place balloons in the -Z region.
       // Angles from PI (Left) to 2PI (Right) puts them in the back half.
@@ -189,13 +189,13 @@ const Scene: React.FC<SceneProps> = ({
         />
 
         {/* Environment for realistic reflections on chocolate/balloons */}
-        <Environment preset="city" />
+        <Environment preset="sunset" />
 
         {/* Background */}
         <Stars
           radius={100}
           depth={50}
-          count={2500}
+          count={1500}
           factor={4}
           saturation={0}
           fade
@@ -279,12 +279,12 @@ const Scene: React.FC<SceneProps> = ({
                     font={fontUrl}
                     size={0.8}
                     height={0.2}
-                    curveSegments={12}
+                    curveSegments={8}
                     bevelEnabled
                     bevelThickness={0.03}
                     bevelSize={0.02}
                     bevelOffset={0}
-                    bevelSegments={5}
+                    bevelSegments={3}
                   >
                     Happy
                     <meshStandardMaterial
@@ -300,12 +300,12 @@ const Scene: React.FC<SceneProps> = ({
                     font={fontUrl}
                     size={0.8}
                     height={0.2}
-                    curveSegments={12}
+                    curveSegments={8}
                     bevelEnabled
                     bevelThickness={0.03}
                     bevelSize={0.02}
                     bevelOffset={0}
-                    bevelSegments={5}
+                    bevelSegments={3}
                   >
                     Birthday
                     <meshStandardMaterial
