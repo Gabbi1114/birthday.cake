@@ -1,0 +1,7 @@
+{
+  "name": "Stellar Cylinder Orbit",
+  "description": "A 3D interactive visualization of a cylindrical star formation within an orbital space environment.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
