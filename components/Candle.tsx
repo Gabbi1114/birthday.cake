@@ -97,7 +97,7 @@ const Smoke: React.FC = () => {
 
 const Candle: React.FC<CandleProps> = ({ position, isLit = true }) => {
   const lightRef = useRef<THREE.PointLight>(null);
-  const flameRef = useRef<THREE.Mesh>(null);
+  const flameGroupRef = useRef<THREE.Group>(null);
   const [showSmoke, setShowSmoke] = useState(false);
 
   useEffect(() => {
@@ -117,10 +117,10 @@ const Candle: React.FC<CandleProps> = ({ position, isLit = true }) => {
     const delta = state.clock.getDelta();
 
     // Handle Extinguishing Animation
-    if (flameRef.current && lightRef.current) {
+    if (flameGroupRef.current && lightRef.current) {
       if (!isLit) {
         // Smooth shrink flame
-        flameRef.current.scale.lerp(
+        flameGroupRef.current.scale.lerp(
           new THREE.Vector3(0, 0, 0),
           0.15 + delta * 5
         );
@@ -139,30 +139,30 @@ const Candle: React.FC<CandleProps> = ({ position, isLit = true }) => {
 
         // Target scale/intensity with smoother lerp
         const targetScale = 1 + flicker * 0.2;
-        const currentScale = flameRef.current.scale.x;
+        const currentScale = flameGroupRef.current.scale.x;
         const nextScale = THREE.MathUtils.lerp(
           currentScale,
           targetScale,
           0.3 + delta * 10
         );
 
-        flameRef.current.scale.set(nextScale, nextScale, nextScale);
+        flameGroupRef.current.scale.set(nextScale, nextScale, nextScale);
         lightRef.current.intensity = THREE.MathUtils.lerp(
           lightRef.current.intensity,
-          3.0 + flicker * 1.0,
+          4.0 + flicker * 1.2,
           0.3 + delta * 10
         );
 
         // Smooth jitter
         const targetX = Math.sin(time * 15) * 0.02;
         const targetZ = Math.cos(time * 12) * 0.02;
-        flameRef.current.position.x = THREE.MathUtils.lerp(
-          flameRef.current.position.x,
+        flameGroupRef.current.position.x = THREE.MathUtils.lerp(
+          flameGroupRef.current.position.x,
           targetX,
           0.2 + delta * 8
         );
-        flameRef.current.position.z = THREE.MathUtils.lerp(
-          flameRef.current.position.z,
+        flameGroupRef.current.position.z = THREE.MathUtils.lerp(
+          flameGroupRef.current.position.z,
           targetZ,
           0.2 + delta * 8
         );
@@ -191,21 +191,33 @@ const Candle: React.FC<CandleProps> = ({ position, isLit = true }) => {
       </mesh>
 
       {/* Flame Group - Moved up to prevent clipping due to larger size */}
-      <group position={[0, 1.85, 0]}>
-        {/* Core Flame - Significantly larger */}
-        <mesh ref={flameRef}>
-          <sphereGeometry args={[0.28, 32, 32]} />
+      <group ref={flameGroupRef} position={[0, 1.9, 0]}>
+        {/* Core Flame - Larger and taller for realism */}
+        <mesh scale={[1, 1.4, 1]}>
+          <coneGeometry args={[0.35, 0.7, 16, 1, true]} />
           <meshBasicMaterial color="#ff5500" toneMapped={false} />
         </mesh>
 
-        {/* Outer Glow (Fake Halo) - Only show if lit roughly */}
+        {/* Middle layer - Orange core */}
+        <mesh scale={[0.7, 1.2, 0.7]}>
+          <coneGeometry args={[0.25, 0.5, 16, 1, true]} />
+          <meshBasicMaterial color="#ff8800" toneMapped={false} />
+        </mesh>
+
+        {/* Inner yellow core */}
+        <mesh scale={[0.4, 0.8, 0.4]}>
+          <coneGeometry args={[0.15, 0.3, 16, 1, true]} />
+          <meshBasicMaterial color="#ffaa00" toneMapped={false} />
+        </mesh>
+
+        {/* Outer Glow (Fake Halo) - Larger for bigger flame */}
         {isLit && (
-          <mesh scale={[2.5, 2.5, 2.5]}>
-            <sphereGeometry args={[0.15, 32, 32]} />
+          <mesh scale={[3.5, 3.5, 3.5]}>
+            <sphereGeometry args={[0.2, 32, 32]} />
             <meshBasicMaterial
               color="#ffaa00"
               transparent
-              opacity={0.2}
+              opacity={0.25}
               toneMapped={false}
             />
           </mesh>
@@ -215,9 +227,9 @@ const Candle: React.FC<CandleProps> = ({ position, isLit = true }) => {
         <pointLight
           ref={lightRef}
           color="#ffaa00"
-          distance={25}
+          distance={30}
           decay={1.5}
-          intensity={3.0}
+          intensity={4.0}
           castShadow
         />
       </group>
