@@ -109,10 +109,11 @@ const Flame = React.forwardRef<THREE.Group, { isLit: boolean }>(
       const time = state.clock.elapsedTime;
       const delta = state.clock.getDelta();
 
-      // Gentle flickering motion - subtle sway
-      const swayX = Math.sin(time * 8) * 0.03;
-      const swayZ = Math.cos(time * 6) * 0.03;
-      const heightVariation = Math.sin(time * 12) * 0.05;
+      // Energetic, dynamic flickering motion - more aggressive like real fire
+      const swayX = Math.sin(time * 15) * 0.08 + Math.cos(time * 23) * 0.04;
+      const swayZ = Math.cos(time * 12) * 0.08 + Math.sin(time * 19) * 0.04;
+      const heightVariation =
+        Math.sin(time * 18) * 0.1 + Math.cos(time * 25) * 0.05;
 
       if (groupRef.current) {
         groupRef.current.position.x = swayX;
@@ -120,24 +121,28 @@ const Flame = React.forwardRef<THREE.Group, { isLit: boolean }>(
         groupRef.current.position.y = heightVariation;
       }
 
-      // Flickering scale variation for realistic flame
-      const flicker =
-        Math.sin(time * 10) * 0.08 +
-        Math.cos(time * 23) * 0.05 +
-        Math.sin(time * 45) * 0.03;
-      const scaleVariation = 1 + flicker;
+      // More aggressive flickering scale variation - fire is very dynamic
+      const flicker1 = Math.sin(time * 15) * 0.15;
+      const flicker2 = Math.cos(time * 28) * 0.1;
+      const flicker3 = Math.sin(time * 42) * 0.08;
+      const flicker4 = Math.cos(time * 35) * 0.05;
+      const scaleVariation = 1 + flicker1 + flicker2 + flicker3 + flicker4;
 
+      // Fast, responsive scaling for energetic fire effect
       if (outerFlameRef.current) {
         const currentScale = outerFlameRef.current.scale.y;
         const targetScale = scaleVariation;
         const nextScale = THREE.MathUtils.lerp(
           currentScale,
           targetScale,
-          0.4 + delta * 10
+          0.6 + delta * 15
         );
         outerFlameRef.current.scale.y = nextScale;
-        outerFlameRef.current.scale.x = nextScale * 0.85; // Slightly narrower
+        outerFlameRef.current.scale.x = nextScale * 0.85;
         outerFlameRef.current.scale.z = nextScale * 0.85;
+
+        // Add rotation for more dynamic effect
+        outerFlameRef.current.rotation.z = Math.sin(time * 20) * 0.1;
       }
 
       if (innerFlameRef.current) {
@@ -146,11 +151,14 @@ const Flame = React.forwardRef<THREE.Group, { isLit: boolean }>(
         const nextScale = THREE.MathUtils.lerp(
           currentScale,
           targetScale,
-          0.4 + delta * 10
+          0.6 + delta * 15
         );
         innerFlameRef.current.scale.y = nextScale;
         innerFlameRef.current.scale.x = nextScale * 0.75;
         innerFlameRef.current.scale.z = nextScale * 0.75;
+
+        // Independent rotation for chaotic fire effect
+        innerFlameRef.current.rotation.z = Math.cos(time * 18) * 0.08;
       }
 
       if (coreRef.current) {
@@ -159,23 +167,27 @@ const Flame = React.forwardRef<THREE.Group, { isLit: boolean }>(
         const nextScale = THREE.MathUtils.lerp(
           currentScale,
           targetScale,
-          0.4 + delta * 10
+          0.6 + delta * 15
         );
         coreRef.current.scale.y = nextScale;
         coreRef.current.scale.x = nextScale * 0.6;
         coreRef.current.scale.z = nextScale * 0.6;
+
+        // Core flickers more intensely
+        coreRef.current.rotation.z = Math.sin(time * 25) * 0.12;
       }
 
-      // Animate light flickering
+      // More dramatic light flickering
       if (lightRef.current) {
         const lightFlicker =
-          Math.sin(time * 10) * 0.1 +
-          Math.cos(time * 23) * 0.1 +
-          Math.sin(time * 45) * 0.05;
+          Math.sin(time * 15) * 0.15 +
+          Math.cos(time * 28) * 0.12 +
+          Math.sin(time * 42) * 0.08 +
+          Math.cos(time * 35) * 0.05;
         lightRef.current.intensity = THREE.MathUtils.lerp(
           lightRef.current.intensity,
-          3.5 + lightFlicker * 1.0,
-          0.3 + delta * 10
+          4.0 + lightFlicker * 1.5,
+          0.5 + delta * 12
         );
       }
     });
@@ -186,66 +198,66 @@ const Flame = React.forwardRef<THREE.Group, { isLit: boolean }>(
 
     return (
       <group ref={groupRef} position={[0, 1.9, 0]}>
-        {/* Outer flame - orange-yellow, teardrop shape */}
+        {/* Outer flame - orange-yellow, teardrop shape - more vibrant */}
         <mesh
           ref={outerFlameRef}
           position={[0, 0.35, 0]}
-          scale={[0.2, 0.6, 0.2]}
+          scale={[0.22, 0.65, 0.22]}
         >
           {/* Teardrop shape using elongated sphere */}
           <sphereGeometry args={[0.3, 16, 16]} />
           <meshBasicMaterial
-            color="#ffaa00"
-            transparent
-            opacity={0.85}
-            toneMapped={false}
-          />
-        </mesh>
-
-        {/* Inner flame - brighter orange */}
-        <mesh
-          ref={innerFlameRef}
-          position={[0, 0.3, 0]}
-          scale={[0.15, 0.5, 0.15]}
-        >
-          <sphereGeometry args={[0.25, 14, 14]} />
-          <meshBasicMaterial
-            color="#ff8800"
+            color="#ff9900"
             transparent
             opacity={0.9}
             toneMapped={false}
           />
         </mesh>
 
-        {/* Core - bright yellow center */}
-        <mesh ref={coreRef} position={[0, 0.2, 0]} scale={[0.1, 0.3, 0.1]}>
-          <sphereGeometry args={[0.15, 12, 12]} />
+        {/* Inner flame - brighter orange - more intense */}
+        <mesh
+          ref={innerFlameRef}
+          position={[0, 0.3, 0]}
+          scale={[0.16, 0.55, 0.16]}
+        >
+          <sphereGeometry args={[0.25, 14, 14]} />
           <meshBasicMaterial
-            color="#ffdd00"
+            color="#ff7700"
             transparent
             opacity={0.95}
             toneMapped={false}
           />
         </mesh>
 
-        {/* Soft outer glow halo */}
-        <mesh position={[0, 0.25, 0]}>
-          <sphereGeometry args={[0.35, 16, 16]} />
+        {/* Core - bright yellow center - very bright */}
+        <mesh ref={coreRef} position={[0, 0.2, 0]} scale={[0.11, 0.35, 0.11]}>
+          <sphereGeometry args={[0.15, 12, 12]} />
           <meshBasicMaterial
-            color="#ffaa00"
+            color="#ffee00"
             transparent
-            opacity={0.15}
+            opacity={0.98}
             toneMapped={false}
           />
         </mesh>
 
-        {/* Light source */}
+        {/* Enhanced outer glow halo - brighter and more visible */}
+        <mesh position={[0, 0.25, 0]}>
+          <sphereGeometry args={[0.4, 16, 16]} />
+          <meshBasicMaterial
+            color="#ff9900"
+            transparent
+            opacity={0.25}
+            toneMapped={false}
+          />
+        </mesh>
+
+        {/* Light source - brighter and more dynamic */}
         <pointLight
           ref={lightRef}
           color="#ffaa00"
-          distance={30}
+          distance={35}
           decay={1.5}
-          intensity={3.5}
+          intensity={4.0}
           castShadow
         />
       </group>
