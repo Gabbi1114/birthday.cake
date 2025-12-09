@@ -72,7 +72,7 @@ const SmokeParticle: React.FC<{
       position={[startPos[0], startPos[1], startPos[2]]}
       scale={[0.1, 0.1, 0.1]}
     >
-      <sphereGeometry args={[0.2, 6, 6]} />
+      <sphereGeometry args={[0.2, 8, 8]} />
       <meshBasicMaterial
         color="#333333"
         transparent

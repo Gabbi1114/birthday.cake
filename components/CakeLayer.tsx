@@ -275,7 +275,7 @@ const CakeLayer: React.FC<CakeLayerProps> = ({
     <group position={position}>
       {/* Main Cake Body */}
       <mesh>
-        <cylinderGeometry args={[radius, radius, height, 32]} />
+        <cylinderGeometry args={[radius, radius, height, 48]} />
         <meshStandardMaterial color={color} metalness={0.05} roughness={0.4} />
       </mesh>
 
