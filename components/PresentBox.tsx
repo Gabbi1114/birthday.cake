@@ -32,11 +32,7 @@ const PresentBox: React.FC<PresentBoxProps> = ({
       {/* Main Box - Red */}
       <mesh castShadow receiveShadow>
         <boxGeometry args={[4, 4, 4]} />
-        <meshStandardMaterial
-          color={color}
-          roughness={0.4}
-          metalness={0.05}
-        />
+        <meshStandardMaterial color={color} roughness={0.4} metalness={0.05} />
       </mesh>
 
       {/* Ribbon - Horizontal (wraps around front/back) */}
@@ -58,11 +54,7 @@ const PresentBox: React.FC<PresentBoxProps> = ({
       </mesh>
 
       {/* Ribbon - Vertical (wraps around left/right) */}
-      <mesh
-        position={[2.01, 0, 0]}
-        rotation={[0, Math.PI / 2, 0]}
-        castShadow
-      >
+      <mesh position={[2.01, 0, 0]} rotation={[0, Math.PI / 2, 0]} castShadow>
         <boxGeometry args={[4.2, 0.4, 0.1]} />
         <meshStandardMaterial
           color={ribbonColor}
@@ -70,11 +62,7 @@ const PresentBox: React.FC<PresentBoxProps> = ({
           metalness={0.1}
         />
       </mesh>
-      <mesh
-        position={[-2.01, 0, 0]}
-        rotation={[0, Math.PI / 2, 0]}
-        castShadow
-      >
+      <mesh position={[-2.01, 0, 0]} rotation={[0, Math.PI / 2, 0]} castShadow>
         <boxGeometry args={[4.2, 0.4, 0.1]} />
         <meshStandardMaterial
           color={ribbonColor}
