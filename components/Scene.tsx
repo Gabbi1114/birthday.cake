@@ -164,11 +164,7 @@ const Scene: React.FC<SceneProps> = ({
 
         {/* Bright & Elegant Lighting */}
         <ambientLight intensity={0.8} color="#fff0e0" />
-        <pointLight
-          position={[30, 20, 30]}
-          intensity={2.0}
-          color="#fff8e1"
-        />
+        <pointLight position={[30, 20, 30]} intensity={2.0} color="#fff8e1" />
         <pointLight position={[-30, 10, -20]} intensity={1.5} color="#ffd700" />
         <spotLight
           position={[0, 40, 0]}
@@ -198,10 +194,7 @@ const Scene: React.FC<SceneProps> = ({
 
         {/* Table Surface (White Blanket) */}
         {/* Bottom of lowest cake layer is at y = -5 - (5/2) = -7.5 */}
-        <mesh
-          position={[0, -7.6, 0]}
-          rotation={[-Math.PI / 2, 0, 0]}
-        >
+        <mesh position={[0, -7.6, 0]} rotation={[-Math.PI / 2, 0, 0]}>
           <circleGeometry args={[50, 16]} />
           <meshStandardMaterial
             color="#ffffff"
