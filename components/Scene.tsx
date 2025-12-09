@@ -267,13 +267,9 @@ const Scene: React.FC<SceneProps> = ({
             metalness={0.0}
           />
         </mesh>
-        
+
         {/* Cylinder table base - stretches downward */}
-        <mesh
-          position={[0, -11.5, 0]}
-          receiveShadow
-          castShadow
-        >
+        <mesh position={[0, -11.5, 0]} receiveShadow castShadow>
           <cylinderGeometry args={[30, 30, 7.8, 32]} />
           <meshStandardMaterial
             color="#ffffff"

@@ -7,7 +7,7 @@ const App: React.FC = () => {
   const [viewMode, setViewMode] = useState<ViewMode>(ViewMode.ORBIT);
   const [showUI, setShowUI] = useState<boolean>(true);
   const [customText, setCustomText] = useState<string>("ALEXANDER");
-
+  
   // Microphone & Candle State
   const [isListening, setIsListening] = useState(false);
   const [candlesBlownOut, setCandlesBlownOut] = useState(false);
@@ -33,18 +33,18 @@ const App: React.FC = () => {
         (window as any).webkitAudioContext)();
       const analyser = audioCtx.createAnalyser();
       const microphone = audioCtx.createMediaStreamSource(stream);
-
+      
       microphone.connect(analyser);
       // Increased FFT size for better frequency resolution
       analyser.fftSize = 512;
       // Moderate smoothing to filter out brief noises while remaining responsive
       analyser.smoothingTimeConstant = 0.5;
-
+      
       audioContextRef.current = audioCtx;
       analyserRef.current = analyser;
       setIsListening(true);
-
-      // If candles are already out, we can reset them or keep them out.
+      
+      // If candles are already out, we can reset them or keep them out. 
       // For this flow, let's assume we are starting fresh or trying to blow them out.
       if (candlesBlownOut) setCandlesBlownOut(false);
 
@@ -58,10 +58,10 @@ const App: React.FC = () => {
 
       const detectBlow = () => {
         if (!analyserRef.current) return;
-
+        
         analyserRef.current.getByteFrequencyData(frequencyData);
         analyserRef.current.getByteTimeDomainData(timeData);
-
+        
         // Focus on lower frequencies (0-150 Hz range) where blowing sounds are strongest
         // Lower frequencies are in the first ~30% of the array
         const lowFreqRange = Math.floor(bufferLength * 0.3);
@@ -96,15 +96,15 @@ const App: React.FC = () => {
           sustainedBlowCount++;
           // Require sustained blowing for multiple frames to avoid false triggers
           if (sustainedBlowCount >= requiredSustainedFrames) {
-            setCandlesBlownOut(true);
-            // We can optionally stop listening here, or keep listening.
-            // Stopping saves resources.
-            setIsListening(false);
-            if (audioContextRef.current) {
-              audioContextRef.current.close();
-              audioContextRef.current = null;
-            }
-            return;
+          setCandlesBlownOut(true);
+          // We can optionally stop listening here, or keep listening.
+          // Stopping saves resources.
+          setIsListening(false);
+          if (audioContextRef.current) {
+            audioContextRef.current.close();
+            audioContextRef.current = null;
+          }
+          return; 
           }
         } else {
           // Reset counter if blow isn't sustained
@@ -128,18 +128,18 @@ const App: React.FC = () => {
     <div className="relative w-full h-full bg-black">
       {/* 3D Scene Container */}
       <div className="absolute inset-0 z-0">
-        <Scene
-          viewMode={viewMode}
-          customText={customText}
+        <Scene 
+          viewMode={viewMode} 
+          customText={customText} 
           candlesBlownOut={candlesBlownOut}
         />
       </div>
 
       {/* UI Overlay - Always rendered, manages its own internal visibility */}
       <div className="absolute inset-0 z-10 pointer-events-none">
-        <UIOverlay
-          currentView={viewMode}
-          onViewChange={setViewMode}
+        <UIOverlay 
+          currentView={viewMode} 
+          onViewChange={setViewMode} 
           onToggleUI={() => setShowUI(!showUI)}
           customText={customText}
           onTextChange={setCustomText}
