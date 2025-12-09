@@ -14,6 +14,7 @@ import Polaroid from "./Polaroid";
 import CakeLayer from "./CakeLayer";
 import Rose from "./Rose";
 import Balloon from "./Balloon";
+import PresentBox from "./PresentBox";
 import { ViewMode } from "../types";
 
 // --- EDITABLE MESSAGE SECTION ---
@@ -289,6 +290,22 @@ const Scene: React.FC<SceneProps> = ({
               type={b.type}
             />
           ))}
+        </group>
+
+        {/* Present Boxes - positioned on sides of cake, avoiding overlap */}
+        <group>
+          <PresentBox
+            position={[-15, -4, 0]}
+            color="#FF6B6B"
+            ribbonColor="#FFD700"
+            scale={1.2}
+          />
+          <PresentBox
+            position={[15, -4, 0]}
+            color="#4ECDC4"
+            ribbonColor="#FF69B4"
+            scale={1.2}
+          />
         </group>
 
         <Formation>
