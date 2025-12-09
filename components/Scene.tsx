@@ -119,19 +119,21 @@ const Scene: React.FC<SceneProps> = ({
       "#BB8FCE", // Lavender
       "#85C1E2", // Sky blue
     ];
-    
+
     const balloonCount = 8;
     const minDistance = 8; // Minimum distance between balloon centers to prevent overlap
     const positions: Array<[number, number, number]> = [];
     const scales: number[] = [];
     const balloonColors: string[] = [];
-    
+
     // Generate balloons with collision detection
     for (let i = 0; i < balloonCount; i++) {
       let attempts = 0;
       let validPosition = false;
-      let x = 0, y = 0, z = 0;
-      
+      let x = 0,
+        y = 0,
+        z = 0;
+
       while (!validPosition && attempts < 100) {
         // Position around the table (closer radius: 12-20)
         const angle = Math.random() * Math.PI * 2; // Full circle around table
@@ -139,7 +141,7 @@ const Scene: React.FC<SceneProps> = ({
         x = Math.cos(angle) * radius;
         z = Math.sin(angle) * radius;
         y = 3 + Math.random() * 12; // Floating height above table
-        
+
         // Check collision with existing balloons
         validPosition = true;
         for (const existingPos of positions) {
@@ -147,23 +149,23 @@ const Scene: React.FC<SceneProps> = ({
           const dy = y - existingPos[1];
           const dz = z - existingPos[2];
           const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-          
+
           if (distance < minDistance) {
             validPosition = false;
             break;
           }
         }
-        
+
         attempts++;
       }
-      
+
       if (validPosition) {
         positions.push([x, y, z]);
         scales.push(2.5 + Math.random() * 2.0); // Slightly smaller scale range
         balloonColors.push(colors[Math.floor(Math.random() * colors.length)]);
       }
     }
-    
+
     return positions.map((position, i) => ({
       position,
       color: balloonColors[i],
