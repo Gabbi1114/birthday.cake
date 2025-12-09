@@ -39,14 +39,14 @@ const PartyHat: React.FC<PartyHatProps> = ({
         <meshStandardMaterial color="#FFFFFF" roughness={0.2} metalness={0.2} />
       </mesh>
 
-      {/* Decorative stripe */}
-      <mesh position={[0, 0.5, 0]} rotation={[0, 0, 0]}>
+      {/* Decorative stripe - rotated 90 degrees */}
+      <mesh position={[0, 0.5, 0]} rotation={[Math.PI / 2, 0, 0]}>
         <torusGeometry args={[1.3, 0.15, 8, 16]} />
         <meshStandardMaterial color="#FFD700" roughness={0.2} metalness={0.3} />
       </mesh>
 
-      {/* Bottom rim */}
-      <mesh position={[0, -2, 0]} rotation={[0, 0, 0]}>
+      {/* Bottom rim - rotated 90 degrees */}
+      <mesh position={[0, -2, 0]} rotation={[Math.PI / 2, 0, 0]}>
         <torusGeometry args={[1.5, 0.2, 8, 16]} />
         <meshStandardMaterial color="#FFFFFF" roughness={0.3} metalness={0.1} />
       </mesh>
