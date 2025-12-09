@@ -15,6 +15,7 @@ import CakeLayer from "./CakeLayer";
 import Rose from "./Rose";
 import Balloon from "./Balloon";
 import PresentBox from "./PresentBox";
+import PartyHat from "./PartyHat";
 import { ViewMode } from "../types";
 
 // --- EDITABLE MESSAGE SECTION ---
@@ -307,6 +308,9 @@ const Scene: React.FC<SceneProps> = ({
             scale={1.8}
           />
         </group>
+
+        {/* Party Hat */}
+        <PartyHat position={[0, 12, 0]} color="#FF6B6B" scale={1.5} />
 
         <Formation>
           {/* Bottom Layer */}
