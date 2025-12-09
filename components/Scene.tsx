@@ -130,13 +130,13 @@ const Scene: React.FC<SceneProps> = ({
 
     // Distribute balloons evenly around the table perimeter
     const angleStep = (Math.PI * 2) / balloonCount;
-    
+
     for (let i = 0; i < balloonCount; i++) {
       // Evenly spaced angles around the circle
       const baseAngle = i * angleStep;
       // Add slight random variation to angle for more natural look
       const angle = baseAngle + (Math.random() - 0.5) * 0.3;
-      
+
       // Position at consistent radius around table perimeter
       const radius = balloonRadius + (Math.random() - 0.5) * 2; // Slight variation in radius
       const x = Math.cos(angle) * radius;
