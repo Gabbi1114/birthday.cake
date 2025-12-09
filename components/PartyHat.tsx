@@ -16,12 +16,12 @@ const PartyHat: React.FC<PartyHatProps> = ({
   const groupRef = useRef<THREE.Group>(null);
   const offset = useMemo(() => Math.random() * 100, []);
 
-  // Gentle bobbing animation
+  // Very subtle animation - stays on table
   useFrame((state) => {
     if (groupRef.current) {
       const time = state.clock.elapsedTime + offset;
-      groupRef.current.position.y = position[1] + Math.sin(time * 0.8) * 0.15;
-      groupRef.current.rotation.y = Math.sin(time * 0.4) * 0.1;
+      // Minimal rotation only, no vertical movement to keep it on table
+      groupRef.current.rotation.y = Math.sin(time * 0.3) * 0.05;
     }
   });
 

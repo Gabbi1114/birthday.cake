@@ -309,8 +309,9 @@ const Scene: React.FC<SceneProps> = ({
           />
         </group>
 
-        {/* Party Hat - on table */}
-        <PartyHat position={[0, -5.5, 0]} color="#FF6B6B" scale={2.5} />
+        {/* Party Hat - on table in bottom right area (red circle area) */}
+        {/* Position: x=12, z=12 (bottom right), y=-5.6 (bottom rim at -7.6 table surface) */}
+        <PartyHat position={[12, -5.6, 12]} color="#FF6B6B" scale={2.5} />
 
         <Formation>
           {/* Bottom Layer */}
