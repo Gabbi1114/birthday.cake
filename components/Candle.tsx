@@ -196,8 +196,8 @@ const Flame = React.forwardRef<THREE.Group, { isLit: boolean }>(
 
     if (!isLit) return null;
 
-    return (
-      <group ref={groupRef} position={[0, 1.9, 0]}>
+      return (
+      <group ref={groupRef} position={[0, 2.2, 0]}>
         {/* Outer flame - orange-yellow, teardrop shape - more vibrant */}
         <mesh
           ref={outerFlameRef}
