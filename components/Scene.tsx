@@ -128,12 +128,21 @@ const Scene: React.FC<SceneProps> = ({
     const scales: number[] = [];
     const balloonColors: string[] = [];
 
-    // Distribute balloons evenly around the table perimeter
-    const angleStep = (Math.PI * 2) / balloonCount;
+    // Distribute balloons around back and sides, avoiding front camera view
+    // Front is at angle π/2 (positive Z), so we exclude angles from π/4 to 3π/4
+    const frontStartAngle = Math.PI / 4; // 45 degrees
+    const frontEndAngle = (3 * Math.PI) / 4; // 135 degrees
+    const availableAngleRange = Math.PI * 2 - (frontEndAngle - frontStartAngle); // Total available angle
+    const angleStep = availableAngleRange / balloonCount;
 
     for (let i = 0; i < balloonCount; i++) {
-      // Evenly spaced angles around the circle
-      const baseAngle = i * angleStep;
+      // Calculate base angle, skipping the front range
+      let baseAngle = i * angleStep;
+      if (baseAngle >= frontStartAngle) {
+        // Skip the front range by adding the excluded angle
+        baseAngle += frontEndAngle - frontStartAngle;
+      }
+      
       // Add slight random variation to angle for more natural look
       const angle = baseAngle + (Math.random() - 0.5) * 0.3;
 
