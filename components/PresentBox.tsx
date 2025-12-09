@@ -11,8 +11,8 @@ interface PresentBoxProps {
 
 const PresentBox: React.FC<PresentBoxProps> = ({
   position,
-  color = "#FF6B6B",
-  ribbonColor = "#FFD700",
+  color = "#DC143C", // Bright red like in the image
+  ribbonColor = "#FFFFFF", // White ribbon
   scale = 1,
 }) => {
   const groupRef = useRef<THREE.Group>(null);
@@ -29,58 +29,105 @@ const PresentBox: React.FC<PresentBoxProps> = ({
 
   return (
     <group ref={groupRef} position={position} scale={scale}>
-      {/* Main Box */}
+      {/* Main Box - Red */}
       <mesh castShadow receiveShadow>
-        <boxGeometry args={[3, 3, 3]} />
-        <meshStandardMaterial color={color} roughness={0.3} metalness={0.1} />
-      </mesh>
-
-      {/* Ribbon - Horizontal */}
-      <mesh position={[0, 0, 1.51]} castShadow>
-        <boxGeometry args={[3.2, 0.3, 0.1]} />
+        <boxGeometry args={[4, 4, 4]} />
         <meshStandardMaterial
-          color={ribbonColor}
-          roughness={0.2}
-          metalness={0.3}
+          color={color}
+          roughness={0.4}
+          metalness={0.05}
         />
       </mesh>
 
-      {/* Ribbon - Vertical */}
-      <mesh position={[0, 0, 1.51]} rotation={[0, Math.PI / 2, 0]} castShadow>
-        <boxGeometry args={[3.2, 0.3, 0.1]} />
+      {/* Ribbon - Horizontal (wraps around front/back) */}
+      <mesh position={[0, 0, 2.01]} castShadow>
+        <boxGeometry args={[4.2, 0.4, 0.1]} />
         <meshStandardMaterial
           color={ribbonColor}
-          roughness={0.2}
-          metalness={0.3}
+          roughness={0.3}
+          metalness={0.1}
+        />
+      </mesh>
+      <mesh position={[0, 0, -2.01]} castShadow>
+        <boxGeometry args={[4.2, 0.4, 0.1]} />
+        <meshStandardMaterial
+          color={ribbonColor}
+          roughness={0.3}
+          metalness={0.1}
         />
       </mesh>
 
-      {/* Bow on top */}
-      <group position={[0, 1.6, 0]}>
-        {/* Bow center */}
+      {/* Ribbon - Vertical (wraps around left/right) */}
+      <mesh
+        position={[2.01, 0, 0]}
+        rotation={[0, Math.PI / 2, 0]}
+        castShadow
+      >
+        <boxGeometry args={[4.2, 0.4, 0.1]} />
+        <meshStandardMaterial
+          color={ribbonColor}
+          roughness={0.3}
+          metalness={0.1}
+        />
+      </mesh>
+      <mesh
+        position={[-2.01, 0, 0]}
+        rotation={[0, Math.PI / 2, 0]}
+        castShadow
+      >
+        <boxGeometry args={[4.2, 0.4, 0.1]} />
+        <meshStandardMaterial
+          color={ribbonColor}
+          roughness={0.3}
+          metalness={0.1}
+        />
+      </mesh>
+
+      {/* Bow on top - more detailed */}
+      <group position={[0, 2.2, 0]}>
+        {/* Bow center knot */}
         <mesh>
-          <boxGeometry args={[0.4, 0.4, 0.4]} />
+          <boxGeometry args={[0.6, 0.6, 0.6]} />
           <meshStandardMaterial
             color={ribbonColor}
-            roughness={0.2}
-            metalness={0.3}
+            roughness={0.3}
+            metalness={0.1}
           />
         </mesh>
-        {/* Bow loops */}
-        <mesh position={[-0.5, 0, 0]} rotation={[0, 0, 0.3]}>
-          <boxGeometry args={[0.6, 0.2, 0.2]} />
+        {/* Bow left loop */}
+        <mesh position={[-0.8, 0, 0]} rotation={[0, 0, 0.4]}>
+          <boxGeometry args={[0.8, 0.3, 0.3]} />
           <meshStandardMaterial
             color={ribbonColor}
-            roughness={0.2}
-            metalness={0.3}
+            roughness={0.3}
+            metalness={0.1}
           />
         </mesh>
-        <mesh position={[0.5, 0, 0]} rotation={[0, 0, -0.3]}>
-          <boxGeometry args={[0.6, 0.2, 0.2]} />
+        {/* Bow right loop */}
+        <mesh position={[0.8, 0, 0]} rotation={[0, 0, -0.4]}>
+          <boxGeometry args={[0.8, 0.3, 0.3]} />
           <meshStandardMaterial
             color={ribbonColor}
-            roughness={0.2}
-            metalness={0.3}
+            roughness={0.3}
+            metalness={0.1}
+          />
+        </mesh>
+        {/* Bow left tail */}
+        <mesh position={[-0.5, -0.6, 0]}>
+          <boxGeometry args={[0.3, 0.6, 0.2]} />
+          <meshStandardMaterial
+            color={ribbonColor}
+            roughness={0.3}
+            metalness={0.1}
+          />
+        </mesh>
+        {/* Bow right tail */}
+        <mesh position={[0.5, -0.6, 0]}>
+          <boxGeometry args={[0.3, 0.6, 0.2]} />
+          <meshStandardMaterial
+            color={ribbonColor}
+            roughness={0.3}
+            metalness={0.1}
           />
         </mesh>
       </group>

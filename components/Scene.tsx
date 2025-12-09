@@ -296,15 +296,15 @@ const Scene: React.FC<SceneProps> = ({
         <group>
           <PresentBox
             position={[-15, -4, 0]}
-            color="#FF6B6B"
-            ribbonColor="#FFD700"
-            scale={1.2}
+            color="#DC143C"
+            ribbonColor="#FFFFFF"
+            scale={1.8}
           />
           <PresentBox
             position={[15, -4, 0]}
-            color="#4ECDC4"
-            ribbonColor="#FF69B4"
-            scale={1.2}
+            color="#DC143C"
+            ribbonColor="#FFFFFF"
+            scale={1.8}
           />
         </group>
 
