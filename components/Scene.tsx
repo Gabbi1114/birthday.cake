@@ -313,7 +313,7 @@ const Scene: React.FC<SceneProps> = ({
             const z = Math.sin(angle) * radius;
             // Vary the depth of folds for natural look
             const foldDepth = 0.2 + Math.sin(i * 2) * 0.15;
-            
+
             return (
               <mesh
                 key={`fold-${i}`}
