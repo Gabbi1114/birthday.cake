@@ -61,12 +61,14 @@ interface SceneProps {
   viewMode: ViewMode;
   customText: string;
   candlesBlownOut?: boolean;
+  polaroidImageUrl?: string | null;
 }
 
 const Scene: React.FC<SceneProps> = ({
   viewMode,
   customText,
   candlesBlownOut = false,
+  polaroidImageUrl = null,
 }) => {
   // Constants for the chocolate design
   const CHOCOLATE_COLOR = "#3e2723";
@@ -426,6 +428,7 @@ const Scene: React.FC<SceneProps> = ({
             scale={1.4}
             showMessage={showPolaroidMessage}
             message={MESSAGE_ON_POLAROID}
+            imageUrl={polaroidImageUrl}
           />
         </Formation>
 

@@ -9,6 +9,7 @@ interface PolaroidProps {
   scale?: number | [number, number, number];
   showMessage?: boolean;
   message?: string;
+  imageUrl?: string | null;
 }
 
 const Polaroid: React.FC<PolaroidProps> = ({
@@ -17,10 +18,57 @@ const Polaroid: React.FC<PolaroidProps> = ({
   scale = 1,
   showMessage = false,
   message = "Happy Birthday!",
+  imageUrl = null,
 }) => {
   const groupRef = useRef<THREE.Group>(null);
   const [hovered, setHovered] = useState(false);
   const [startSpin, setStartSpin] = useState(false);
+  const [texture, setTexture] = useState<THREE.Texture | null>(null);
+
+  // Load texture when imageUrl changes
+  useEffect(() => {
+    let currentTexture: THREE.Texture | null = null;
+
+    if (imageUrl) {
+      console.log("Loading Polaroid image from:", imageUrl);
+      const loader = new THREE.TextureLoader();
+      loader.load(
+        imageUrl,
+        (loadedTexture) => {
+          console.log("Polaroid image loaded successfully");
+          // Flip texture vertically to match Three.js coordinate system
+          loadedTexture.flipY = false;
+          currentTexture = loadedTexture;
+          setTexture(loadedTexture);
+        },
+        (progress) => {
+          console.log("Loading progress:", progress);
+        },
+        (error) => {
+          console.error("Failed to load Polaroid image texture:", error);
+          console.error("Attempted URL:", imageUrl);
+          setTexture(null);
+        }
+      );
+    } else {
+      console.log("No imageUrl provided for Polaroid");
+      setTexture(null);
+    }
+
+    // Cleanup texture when component unmounts or imageUrl changes
+    return () => {
+      if (currentTexture) {
+        currentTexture.dispose();
+      }
+      // Also dispose the texture in state if it exists
+      setTexture((prevTexture) => {
+        if (prevTexture && prevTexture !== currentTexture) {
+          prevTexture.dispose();
+        }
+        return null;
+      });
+    };
+  }, [imageUrl]);
 
   // Handle delay for spin animation
   useEffect(() => {
@@ -180,33 +228,34 @@ const Polaroid: React.FC<PolaroidProps> = ({
         <meshBasicMaterial color="#1a1a2e" />
       </mesh>
 
-      {/* Photo Content - A stylized star/space memory */}
-      <group position={[0, 2, 0.04]}>
-        {/* Central Star in photo */}
-        <mesh position={[0, 0, 0]}>
-          <circleGeometry args={[0.5, 32]} />
-          <meshBasicMaterial color="#ffd700" />
+      {/* Photo Content - Display PNG image or default star pattern */}
+      {texture ? (
+        <mesh position={[0, 2, 0.04]}>
+          <planeGeometry args={[2.5, 2.5]} />
+          <meshBasicMaterial map={texture} />
         </mesh>
-        {/* Tiny stars */}
-        <mesh position={[0.8, 0.8, 0]}>
-          <circleGeometry args={[0.05, 8]} />
-          <meshBasicMaterial color="white" />
-        </mesh>
-        <mesh position={[-0.7, 0.6, 0]}>
-          <circleGeometry args={[0.08, 8]} />
-          <meshBasicMaterial color="white" />
-        </mesh>
-        <mesh position={[-0.5, -0.8, 0]}>
-          <circleGeometry args={[0.04, 8]} />
-          <meshBasicMaterial color="white" />
-        </mesh>
-      </group>
-
-      {/* Optional: Marker Text Simulation at bottom */}
-      <mesh position={[0.5, 0.35, 0.03]} rotation={[0, 0, -0.05]}>
-        <planeGeometry args={[1.5, 0.1]} />
-        <meshBasicMaterial color="#000000" opacity={0.5} transparent />
-      </mesh>
+      ) : (
+        <group position={[0, 2, 0.04]}>
+          {/* Central Star in photo */}
+          <mesh position={[0, 0, 0]}>
+            <circleGeometry args={[0.5, 32]} />
+            <meshBasicMaterial color="#ffd700" />
+          </mesh>
+          {/* Tiny stars */}
+          <mesh position={[0.8, 0.8, 0]}>
+            <circleGeometry args={[0.05, 8]} />
+            <meshBasicMaterial color="white" />
+          </mesh>
+          <mesh position={[-0.7, 0.6, 0]}>
+            <circleGeometry args={[0.08, 8]} />
+            <meshBasicMaterial color="white" />
+          </mesh>
+          <mesh position={[-0.5, -0.8, 0]}>
+            <circleGeometry args={[0.04, 8]} />
+            <meshBasicMaterial color="white" />
+          </mesh>
+        </group>
+      )}
     </group>
   );
 };

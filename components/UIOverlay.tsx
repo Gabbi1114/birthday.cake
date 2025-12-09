@@ -1,10 +1,6 @@
-import React from 'react';
-import { ViewMode } from '../types';
-import { 
-  Mic,
-  MicOff,
-  Wind
-} from 'lucide-react';
+import React from "react";
+import { ViewMode } from "../types";
+import { Mic, MicOff, Wind } from "lucide-react";
 
 interface UIOverlayProps {
   currentView: ViewMode;
@@ -18,7 +14,7 @@ interface UIOverlayProps {
   visible?: boolean;
 }
 
-const UIOverlay: React.FC<UIOverlayProps> = ({ 
+const UIOverlay: React.FC<UIOverlayProps> = ({
   isListening = false,
   onEnableMic,
   candlesBlownOut = false,
@@ -27,16 +23,21 @@ const UIOverlay: React.FC<UIOverlayProps> = ({
     <div className="w-full h-full p-6 pointer-events-none flex flex-col items-start justify-start">
       <div className="pointer-events-auto">
         {/* Microphone Control - Always Visible */}
-        <button 
+        <button
           onClick={onEnableMic}
           disabled={isListening && !candlesBlownOut}
           className={`
             flex items-center gap-3 bg-black/40 backdrop-blur-md p-3 rounded-lg border transition-all whitespace-nowrap
-            ${isListening 
-              ? 'border-red-500/50 bg-red-900/10 text-red-200' 
-              : 'border-white/10 text-gray-400 hover:bg-white/10 hover:text-white'
+            ${
+              isListening
+                ? "border-red-500/50 bg-red-900/10 text-red-200"
+                : "border-white/10 text-gray-400 hover:bg-white/10 hover:text-white"
             }
-            ${candlesBlownOut ? 'border-green-500/50 bg-green-900/10 text-green-200' : ''}
+            ${
+              candlesBlownOut
+                ? "border-green-500/50 bg-green-900/10 text-green-200"
+                : ""
+            }
           `}
         >
           {candlesBlownOut ? (
@@ -46,13 +47,17 @@ const UIOverlay: React.FC<UIOverlayProps> = ({
           ) : (
             <MicOff className="w-5 h-5" />
           )}
-          
+
           <div className="flex flex-col text-left">
             <label className="text-[10px] uppercase tracking-widest font-bold opacity-70">
-              {candlesBlownOut ? 'WISH' : 'BLOW'} DETECTION
+              {candlesBlownOut ? "WISH" : "BLOW"} DETECTION
             </label>
             <span className="font-mono text-sm font-bold">
-              {candlesBlownOut ? 'GRANTED' : isListening ? 'LISTENING...' : 'ENABLE MIC'}
+              {candlesBlownOut
+                ? "GRANTED"
+                : isListening
+                ? "LISTENING..."
+                : "ENABLE MIC"}
             </span>
           </div>
         </button>
