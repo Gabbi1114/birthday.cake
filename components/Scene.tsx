@@ -120,13 +120,15 @@ const Scene: React.FC<SceneProps> = ({
       "#85C1E2", // Sky blue
     ];
 
-    const balloonCount = 8;
+    const balloonCount = 15; // Increased from 8 to 15
     const tableRadius = 30; // Table radius
     const balloonRadius = tableRadius + 5; // Position balloons just outside table edge
     const minDistance = 6; // Minimum distance between balloon centers to prevent overlap
     const positions: Array<[number, number, number]> = [];
     const scales: number[] = [];
     const balloonColors: string[] = [];
+    const balloonTypes: Array<"round" | "apple" | "banana" | "dog" | "heart"> =
+      [];
 
     // Distribute balloons around back and sides, avoiding front camera view
     // Front is at angle π/2 (positive Z), so we exclude angles from π/4 to 3π/4
@@ -155,12 +157,36 @@ const Scene: React.FC<SceneProps> = ({
       positions.push([x, y, z]);
       scales.push(2.5 + Math.random() * 2.0);
       balloonColors.push(colors[Math.floor(Math.random() * colors.length)]);
+
+      // Assign balloon types - mix of round, apple, banana, dog, and heart
+      const types: Array<"round" | "apple" | "banana" | "dog" | "heart"> = [
+        "round",
+        "round",
+        "apple",
+        "banana",
+        "dog",
+        "heart",
+      ];
+      // Randomly assign types with more round balloons
+      const rand = Math.random();
+      if (rand < 0.4) {
+        balloonTypes.push("round");
+      } else if (rand < 0.55) {
+        balloonTypes.push("apple");
+      } else if (rand < 0.7) {
+        balloonTypes.push("banana");
+      } else if (rand < 0.85) {
+        balloonTypes.push("dog");
+      } else {
+        balloonTypes.push("heart");
+      }
     }
 
     return positions.map((position, i) => ({
       position,
       color: balloonColors[i],
       scale: scales[i],
+      type: balloonTypes[i],
     }));
   }, []);
 
@@ -260,6 +286,7 @@ const Scene: React.FC<SceneProps> = ({
               position={b.position}
               color={b.color}
               scale={b.scale}
+              type={b.type}
             />
           ))}
         </group>
