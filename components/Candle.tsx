@@ -95,59 +95,86 @@ const Smoke: React.FC = () => {
   );
 };
 
-// Organic realistic flame component
+// Realistic single candle flame component
 const Flame = React.forwardRef<THREE.Group, { isLit: boolean }>(
   ({ isLit }, ref) => {
     const groupRef = useRef<THREE.Group>(null);
+    const outerFlameRef = useRef<THREE.Mesh>(null);
+    const innerFlameRef = useRef<THREE.Mesh>(null);
+    const coreRef = useRef<THREE.Mesh>(null);
     const lightRef = useRef<THREE.PointLight>(null);
-
-    // Create multiple flame tongues for organic look
-    const flameTongues = useMemo(() => {
-      return Array.from({ length: 5 }).map((_, i) => ({
-        offset: Math.random() * Math.PI * 2,
-        speed: 0.8 + Math.random() * 0.4,
-        radius: 0.08 + Math.random() * 0.05,
-        height: 0.4 + Math.random() * 0.3,
-        angle: (i / 5) * Math.PI * 2,
-      }));
-    }, []);
 
     useFrame((state) => {
       if (!groupRef.current) return;
       const time = state.clock.elapsedTime;
+      const delta = state.clock.getDelta();
 
-      // Animate each flame tongue organically
-      flameTongues.forEach((tongue, i) => {
-        const tongueMesh = groupRef.current?.children[i] as THREE.Mesh;
-        if (tongueMesh) {
-          // Organic swaying motion
-          const swayX = Math.sin(time * tongue.speed + tongue.offset) * 0.15;
-          const swayZ =
-            Math.cos(time * tongue.speed * 0.7 + tongue.offset) * 0.15;
-          const heightVariation =
-            Math.sin(time * tongue.speed * 1.3 + tongue.offset) * 0.1;
+      // Gentle flickering motion - subtle sway
+      const swayX = Math.sin(time * 8) * 0.03;
+      const swayZ = Math.cos(time * 6) * 0.03;
+      const heightVariation = Math.sin(time * 12) * 0.05;
 
-          tongueMesh.position.x = Math.cos(tongue.angle) * 0.1 + swayX;
-          tongueMesh.position.z = Math.sin(tongue.angle) * 0.1 + swayZ;
-          tongueMesh.position.y = tongue.height * 0.5 + heightVariation;
+      if (groupRef.current) {
+        groupRef.current.position.x = swayX;
+        groupRef.current.position.z = swayZ;
+        groupRef.current.position.y = heightVariation;
+      }
 
-          // Organic scale variation
-          const scaleVariation =
-            1 + Math.sin(time * tongue.speed * 2 + tongue.offset) * 0.2;
-          tongueMesh.scale.setScalar(scaleVariation);
-        }
-      });
+      // Flickering scale variation for realistic flame
+      const flicker =
+        Math.sin(time * 10) * 0.08 +
+        Math.cos(time * 23) * 0.05 +
+        Math.sin(time * 45) * 0.03;
+      const scaleVariation = 1 + flicker;
+
+      if (outerFlameRef.current) {
+        const currentScale = outerFlameRef.current.scale.y;
+        const targetScale = scaleVariation;
+        const nextScale = THREE.MathUtils.lerp(
+          currentScale,
+          targetScale,
+          0.4 + delta * 10
+        );
+        outerFlameRef.current.scale.y = nextScale;
+        outerFlameRef.current.scale.x = nextScale * 0.85; // Slightly narrower
+        outerFlameRef.current.scale.z = nextScale * 0.85;
+      }
+
+      if (innerFlameRef.current) {
+        const currentScale = innerFlameRef.current.scale.y;
+        const targetScale = scaleVariation * 0.9;
+        const nextScale = THREE.MathUtils.lerp(
+          currentScale,
+          targetScale,
+          0.4 + delta * 10
+        );
+        innerFlameRef.current.scale.y = nextScale;
+        innerFlameRef.current.scale.x = nextScale * 0.75;
+        innerFlameRef.current.scale.z = nextScale * 0.75;
+      }
+
+      if (coreRef.current) {
+        const currentScale = coreRef.current.scale.y;
+        const targetScale = scaleVariation * 0.7;
+        const nextScale = THREE.MathUtils.lerp(
+          currentScale,
+          targetScale,
+          0.4 + delta * 10
+        );
+        coreRef.current.scale.y = nextScale;
+        coreRef.current.scale.x = nextScale * 0.6;
+        coreRef.current.scale.z = nextScale * 0.6;
+      }
 
       // Animate light flickering
       if (lightRef.current) {
-        const delta = state.clock.getDelta();
-        const flicker =
+        const lightFlicker =
           Math.sin(time * 10) * 0.1 +
           Math.cos(time * 23) * 0.1 +
           Math.sin(time * 45) * 0.05;
         lightRef.current.intensity = THREE.MathUtils.lerp(
           lightRef.current.intensity,
-          4.0 + flicker * 1.2,
+          3.5 + lightFlicker * 1.0,
           0.3 + delta * 10
         );
       }
@@ -159,33 +186,40 @@ const Flame = React.forwardRef<THREE.Group, { isLit: boolean }>(
 
     return (
       <group ref={groupRef} position={[0, 1.9, 0]}>
-        {/* Multiple organic flame tongues */}
-        {flameTongues.map((tongue, i) => (
-          <mesh
-            key={i}
-            position={[
-              Math.cos(tongue.angle) * 0.1,
-              tongue.height * 0.5,
-              Math.sin(tongue.angle) * 0.1,
-            ]}
-            scale={[1, 1, 1]}
-          >
-            {/* Organic flame shape using sphere with custom scaling */}
-            <sphereGeometry
-              args={[tongue.radius, 12, 12, 0, Math.PI * 2, 0, Math.PI]}
-            />
-            <meshBasicMaterial
-              color={i < 2 ? "#ffaa00" : i < 4 ? "#ff8800" : "#ff5500"}
-              transparent
-              opacity={0.9}
-              toneMapped={false}
-            />
-          </mesh>
-        ))}
+        {/* Outer flame - orange-yellow, teardrop shape */}
+        <mesh
+          ref={outerFlameRef}
+          position={[0, 0.35, 0]}
+          scale={[0.2, 0.6, 0.2]}
+        >
+          {/* Teardrop shape using elongated sphere */}
+          <sphereGeometry args={[0.3, 16, 16]} />
+          <meshBasicMaterial
+            color="#ffaa00"
+            transparent
+            opacity={0.85}
+            toneMapped={false}
+          />
+        </mesh>
 
-        {/* Central core - brightest yellow */}
-        <mesh position={[0, 0.25, 0]}>
-          <sphereGeometry args={[0.12, 12, 12]} />
+        {/* Inner flame - brighter orange */}
+        <mesh
+          ref={innerFlameRef}
+          position={[0, 0.3, 0]}
+          scale={[0.15, 0.5, 0.15]}
+        >
+          <sphereGeometry args={[0.25, 14, 14]} />
+          <meshBasicMaterial
+            color="#ff8800"
+            transparent
+            opacity={0.9}
+            toneMapped={false}
+          />
+        </mesh>
+
+        {/* Core - bright yellow center */}
+        <mesh ref={coreRef} position={[0, 0.2, 0]} scale={[0.1, 0.3, 0.1]}>
+          <sphereGeometry args={[0.15, 12, 12]} />
           <meshBasicMaterial
             color="#ffdd00"
             transparent
@@ -194,13 +228,13 @@ const Flame = React.forwardRef<THREE.Group, { isLit: boolean }>(
           />
         </mesh>
 
-        {/* Outer glow - soft halo */}
-        <mesh position={[0, 0.3, 0]}>
-          <sphereGeometry args={[0.3, 16, 16]} />
+        {/* Soft outer glow halo */}
+        <mesh position={[0, 0.25, 0]}>
+          <sphereGeometry args={[0.35, 16, 16]} />
           <meshBasicMaterial
             color="#ffaa00"
             transparent
-            opacity={0.2}
+            opacity={0.15}
             toneMapped={false}
           />
         </mesh>
@@ -211,7 +245,7 @@ const Flame = React.forwardRef<THREE.Group, { isLit: boolean }>(
           color="#ffaa00"
           distance={30}
           decay={1.5}
-          intensity={4.0}
+          intensity={3.5}
           castShadow
         />
       </group>
