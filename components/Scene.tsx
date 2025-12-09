@@ -103,14 +103,21 @@ const Scene: React.FC<SceneProps> = ({
     });
   }, [candlesBlownOut]);
 
-  // Generate random balloons
+  // Generate random balloons with vibrant colors
   const balloons = useMemo(() => {
     const colors = [
-      GOLD_COLOR,
-      CREAM_COLOR,
-      "#ffffff",
-      "#c0c0c0",
-      CHOCOLATE_COLOR,
+      "#FF6B6B", // Bright red
+      "#4ECDC4", // Turquoise
+      "#FFE66D", // Yellow
+      "#FF6B9D", // Pink
+      "#C44569", // Deep pink
+      "#6C5CE7", // Purple
+      "#00D2D3", // Cyan
+      "#FFA07A", // Light salmon
+      "#98D8C8", // Mint green
+      "#F7DC6F", // Light yellow
+      "#BB8FCE", // Lavender
+      "#85C1E2", // Sky blue
     ];
     return Array.from({ length: 8 }).map((_, i) => {
       // Position scattered around the back (semi-circle) to avoid blocking the front view
@@ -142,12 +149,14 @@ const Scene: React.FC<SceneProps> = ({
       gl={{
         antialias: true,
         toneMapping: THREE.ACESFilmicToneMapping,
-        toneMappingExposure: 1.2,
+        toneMappingExposure: 1.3,
         powerPreference: "high-performance",
         alpha: false,
+        stencil: false,
+        depth: true,
       }}
       dpr={[1, Math.min(window.devicePixelRatio, 2.5)]}
-      shadows={false}
+      shadows={true}
       performance={{ min: 0.5 }}
       frameloop="always"
     >
@@ -165,21 +174,31 @@ const Scene: React.FC<SceneProps> = ({
         />
 
         {/* Bright & Elegant Lighting */}
-        <ambientLight intensity={0.8} color="#fff0e0" />
-        <pointLight position={[30, 20, 30]} intensity={2.0} color="#fff8e1" />
-        <pointLight position={[-30, 10, -20]} intensity={1.5} color="#ffd700" />
+        <ambientLight intensity={1.0} color="#fff0e0" />
+        <pointLight
+          position={[30, 20, 30]}
+          intensity={2.5}
+          color="#fff8e1"
+          castShadow
+          shadow-mapSize={[512, 512]}
+        />
+        <pointLight position={[-30, 10, -20]} intensity={2.0} color="#ffd700" />
         <spotLight
           position={[0, 40, 0]}
           angle={0.5}
           penumbra={1}
-          intensity={2.5}
+          intensity={3.0}
           color="#ffffff"
+          castShadow
+          shadow-mapSize={[512, 512]}
         />
         <directionalLight
           position={[0, 10, 20]}
-          intensity={1.0}
+          intensity={1.5}
           color="#fff5e6"
         />
+        {/* Rim lighting for better depth */}
+        <pointLight position={[0, 5, -30]} intensity={1.5} color="#ffebcd" />
 
         {/* Environment disabled for better performance */}
 
@@ -196,7 +215,11 @@ const Scene: React.FC<SceneProps> = ({
 
         {/* Table Surface (White Blanket) */}
         {/* Bottom of lowest cake layer is at y = -5 - (5/2) = -7.5 */}
-        <mesh position={[0, -7.6, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <mesh
+          position={[0, -7.6, 0]}
+          rotation={[-Math.PI / 2, 0, 0]}
+          receiveShadow
+        >
           <circleGeometry args={[50, 32]} />
           <meshStandardMaterial
             color="#ffffff"
