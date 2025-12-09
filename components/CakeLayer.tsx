@@ -101,9 +101,9 @@ const Sprinkles: React.FC<{ radius: number; count: number }> = ({
       {items.map((s, i) => (
         <mesh key={i} position={s.position} rotation={s.rotation}>
           {s.type === "sprinkle" ? (
-            <cylinderGeometry args={[0.03, 0.03, 0.3, 8]} />
+            <cylinderGeometry args={[0.03, 0.03, 0.3, 12]} />
           ) : (
-            <sphereGeometry args={[0.1, 8, 8]} />
+            <sphereGeometry args={[0.1, 12, 12]} />
           )}
           <meshStandardMaterial
             color={s.color}
@@ -142,7 +142,7 @@ const CreamRim: React.FC<{
           position={d.pos}
           scale={[d.scale, d.scale * 0.8, d.scale]}
         >
-          <sphereGeometry args={[0.25, 16, 16]} />
+          <sphereGeometry args={[0.25, 20, 20]} />
           <meshStandardMaterial color={color} roughness={0.5} metalness={0.1} />
         </mesh>
       ))}
@@ -184,11 +184,11 @@ const GoldDrip: React.FC<{ radius: number; height: number }> = ({
       {drips.map((d, i) => (
         <group key={i} position={[d.x, 0, d.z]} rotation={[0, -d.angle, 0]}>
           <mesh position={[0, -d.length / 2, 0]}>
-            <cylinderGeometry args={[d.width, d.width, d.length, 8]} />
+            <cylinderGeometry args={[d.width, d.width, d.length, 12]} />
             {goldMaterial}
           </mesh>
           <mesh position={[0, -d.length, 0]}>
-            <sphereGeometry args={[d.width * 1.1, 16, 16]} />
+             <sphereGeometry args={[d.width * 1.1, 20, 20]} />
             {goldMaterial}
           </mesh>
         </group>
@@ -275,7 +275,7 @@ const CakeLayer: React.FC<CakeLayerProps> = ({
     <group position={position}>
       {/* Main Cake Body */}
       <mesh>
-        <cylinderGeometry args={[radius, radius, height, 48]} />
+        <cylinderGeometry args={[radius, radius, height, 64]} />
         <meshStandardMaterial color={color} metalness={0.05} roughness={0.4} />
       </mesh>
 

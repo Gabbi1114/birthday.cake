@@ -146,7 +146,7 @@ const Scene: React.FC<SceneProps> = ({
         powerPreference: "high-performance",
         alpha: false,
       }}
-      dpr={[1, Math.min(window.devicePixelRatio, 2)]}
+      dpr={[1, Math.min(window.devicePixelRatio, 2.5)]}
       shadows={false}
       performance={{ min: 0.5 }}
       frameloop="always"
@@ -187,7 +187,7 @@ const Scene: React.FC<SceneProps> = ({
         <Stars
           radius={100}
           depth={50}
-          count={1200}
+          count={2000}
           factor={4}
           saturation={0}
           fade
@@ -197,7 +197,7 @@ const Scene: React.FC<SceneProps> = ({
         {/* Table Surface (White Blanket) */}
         {/* Bottom of lowest cake layer is at y = -5 - (5/2) = -7.5 */}
         <mesh position={[0, -7.6, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-          <circleGeometry args={[50, 24]} />
+          <circleGeometry args={[50, 32]} />
           <meshStandardMaterial
             color="#ffffff"
             roughness={0.9}

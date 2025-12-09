@@ -152,7 +152,7 @@ const Candle: React.FC<CandleProps> = ({ position, isLit = true }) => {
     <group position={position}>
       {/* Wax Body */}
       <mesh position={[0, 0.75, 0]}>
-        <cylinderGeometry args={[0.25, 0.25, 1.5, 16]} />
+        <cylinderGeometry args={[0.25, 0.25, 1.5, 24]} />
         <meshStandardMaterial
           color="#ffffee"
           roughness={0.2}
@@ -164,7 +164,7 @@ const Candle: React.FC<CandleProps> = ({ position, isLit = true }) => {
 
       {/* Wick */}
       <mesh position={[0, 1.5, 0]}>
-        <cylinderGeometry args={[0.03, 0.03, 0.3, 8]} />
+        <cylinderGeometry args={[0.03, 0.03, 0.3, 12]} />
         <meshStandardMaterial color="#1a1a1a" />
       </mesh>
 
