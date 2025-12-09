@@ -252,87 +252,35 @@ const Scene: React.FC<SceneProps> = ({
           speed={1}
         />
 
-        {/* Table with Blanket */}
-        <group>
-          {/* Table Legs - positioned at corners */}
-          {[
-            [20, -11.5, 20],
-            [-20, -11.5, 20],
-            [20, -11.5, -20],
-            [-20, -11.5, -20],
-          ].map((legPos, i) => (
-            <mesh
-              key={i}
-              position={legPos as [number, number, number]}
-              castShadow
-            >
-              <cylinderGeometry args={[0.8, 0.8, 7, 16]} />
-              <meshStandardMaterial
-                color="#8B4513"
-                roughness={0.7}
-                metalness={0.1}
-              />
-            </mesh>
-          ))}
-
-          {/* Table Top */}
-          <mesh
-            position={[0, -7.6, 0]}
-            rotation={[-Math.PI / 2, 0, 0]}
-            receiveShadow
-            castShadow
-          >
-            <cylinderGeometry args={[30, 30, 0.3, 32]} />
-            <meshStandardMaterial
-              color="#D2691E"
-              roughness={0.8}
-              metalness={0.1}
-            />
-          </mesh>
-
-          {/* White Blanket with Folds */}
-          {/* Main blanket surface */}
-          <mesh
-            position={[0, -7.5, 0]}
-            rotation={[-Math.PI / 2, 0, 0]}
-            receiveShadow
-          >
-            <circleGeometry args={[30, 32]} />
-            <meshStandardMaterial
-              color="#ffffff"
-              roughness={0.9}
-              metalness={0.0}
-            />
-          </mesh>
-
-          {/* Vertical Draping Folds - hanging down from table edge like a real tablecloth */}
-          {Array.from({ length: 24 }).map((_, i) => {
-            const angle = (i / 24) * Math.PI * 2;
-            const radius = 30;
-            const x = Math.cos(angle) * radius;
-            const z = Math.sin(angle) * radius;
-            // Vary the depth of folds for natural look
-            const foldDepth = 0.2 + Math.sin(i * 2) * 0.15;
-
-            return (
-              <mesh
-                key={`fold-${i}`}
-                position={[x, -9.5, z]}
-                rotation={[0, angle + Math.PI / 2, 0]}
-                receiveShadow
-                castShadow
-              >
-                {/* Vertical fold panel hanging down from table */}
-                <boxGeometry args={[1.2, 4, foldDepth]} />
-                <meshStandardMaterial
-                  color="#f8f8f8"
-                  roughness={0.9}
-                  metalness={0.0}
-                />
-              </mesh>
-            );
-          })}
-        </group>
+        {/* Table Surface (White Blanket) */}
+        {/* Bottom of lowest cake layer is at y = -5 - (5/2) = -7.5 */}
+        {/* Table top surface */}
+        <mesh
+          position={[0, -7.6, 0]}
+          rotation={[-Math.PI / 2, 0, 0]}
+          receiveShadow
+        >
+          <circleGeometry args={[30, 32]} />
+          <meshStandardMaterial
+            color="#ffffff"
+            roughness={0.9}
+            metalness={0.0}
+          />
+        </mesh>
+        
+        {/* Cylinder table base - stretches downward */}
+        <mesh
+          position={[0, -11.5, 0]}
+          receiveShadow
+          castShadow
+        >
+          <cylinderGeometry args={[30, 30, 7.8, 32]} />
+          <meshStandardMaterial
+            color="#ffffff"
+            roughness={0.9}
+            metalness={0.0}
+          />
+        </mesh>
 
         {/* Scattered Balloons (Outside rotation) */}
         <group>
