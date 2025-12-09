@@ -252,20 +252,89 @@ const Scene: React.FC<SceneProps> = ({
           speed={1}
         />
 
-        {/* Table Surface (White Blanket) */}
-        {/* Bottom of lowest cake layer is at y = -5 - (5/2) = -7.5 */}
-        <mesh
-          position={[0, -7.6, 0]}
-          rotation={[-Math.PI / 2, 0, 0]}
-          receiveShadow
-        >
-          <circleGeometry args={[30, 32]} />
-          <meshStandardMaterial
-            color="#ffffff"
-            roughness={0.9}
-            metalness={0.0}
-          />
-        </mesh>
+        {/* Table with Blanket */}
+        <group>
+          {/* Table Legs */}
+          {[
+            [20, -7.6, 20],
+            [-20, -7.6, 20],
+            [20, -7.6, -20],
+            [-20, -7.6, -20],
+          ].map((legPos, i) => (
+            <mesh
+              key={i}
+              position={legPos as [number, number, number]}
+              castShadow
+            >
+              <cylinderGeometry args={[0.8, 0.8, 7, 16]} />
+              <meshStandardMaterial
+                color="#8B4513"
+                roughness={0.7}
+                metalness={0.1}
+              />
+            </mesh>
+          ))}
+
+          {/* Table Top */}
+          <mesh
+            position={[0, -4.1, 0]}
+            rotation={[-Math.PI / 2, 0, 0]}
+            receiveShadow
+            castShadow
+          >
+            <cylinderGeometry args={[30, 30, 0.3, 32]} />
+            <meshStandardMaterial
+              color="#D2691E"
+              roughness={0.8}
+              metalness={0.1}
+            />
+          </mesh>
+
+          {/* White Blanket with Folds */}
+          {/* Main blanket surface */}
+          <mesh
+            position={[0, -7.5, 0]}
+            rotation={[-Math.PI / 2, 0, 0]}
+            receiveShadow
+          >
+            <circleGeometry args={[30, 32]} />
+            <meshStandardMaterial
+              color="#ffffff"
+              roughness={0.9}
+              metalness={0.0}
+            />
+          </mesh>
+
+          {/* Blanket folds/creases - creating curves */}
+          {[
+            { angle: 0, radius: 25, height: 0.1 },
+            { angle: Math.PI / 2, radius: 25, height: 0.1 },
+            { angle: Math.PI, radius: 25, height: 0.1 },
+            { angle: (3 * Math.PI) / 2, radius: 25, height: 0.1 },
+            { angle: Math.PI / 4, radius: 20, height: 0.08 },
+            { angle: (3 * Math.PI) / 4, radius: 20, height: 0.08 },
+            { angle: (5 * Math.PI) / 4, radius: 20, height: 0.08 },
+            { angle: (7 * Math.PI) / 4, radius: 20, height: 0.08 },
+          ].map((fold, i) => (
+            <mesh
+              key={`fold-${i}`}
+              position={[
+                Math.cos(fold.angle) * fold.radius,
+                -7.5 + fold.height,
+                Math.sin(fold.angle) * fold.radius,
+              ]}
+              rotation={[-Math.PI / 2, fold.angle, 0]}
+              receiveShadow
+            >
+              <cylinderGeometry args={[2, 2, fold.height * 2, 16]} />
+              <meshStandardMaterial
+                color="#f5f5f5"
+                roughness={0.9}
+                metalness={0.0}
+              />
+            </mesh>
+          ))}
+        </group>
 
         {/* Scattered Balloons (Outside rotation) */}
         <group>
