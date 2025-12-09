@@ -127,8 +127,7 @@ const Scene: React.FC<SceneProps> = ({
     const positions: Array<[number, number, number]> = [];
     const scales: number[] = [];
     const balloonColors: string[] = [];
-    const balloonTypes: Array<"round" | "apple" | "banana" | "dog" | "heart"> =
-      [];
+    const balloonTypes: Array<"round" | "apple" | "banana" | "dog"> = [];
 
     // Distribute balloons around back and sides, avoiding front camera view
     // Front is at angle π/2 (positive Z), so we exclude angles from π/4 to 3π/4
@@ -158,27 +157,17 @@ const Scene: React.FC<SceneProps> = ({
       scales.push(2.5 + Math.random() * 2.0);
       balloonColors.push(colors[Math.floor(Math.random() * colors.length)]);
 
-      // Assign balloon types - mix of round, apple, banana, dog, and heart
-      const types: Array<"round" | "apple" | "banana" | "dog" | "heart"> = [
-        "round",
-        "round",
-        "apple",
-        "banana",
-        "dog",
-        "heart",
-      ];
+      // Assign balloon types - mix of round, apple, banana, and dog
       // Randomly assign types with more round balloons
       const rand = Math.random();
-      if (rand < 0.4) {
+      if (rand < 0.45) {
         balloonTypes.push("round");
-      } else if (rand < 0.55) {
+      } else if (rand < 0.65) {
         balloonTypes.push("apple");
-      } else if (rand < 0.7) {
+      } else if (rand < 0.8) {
         balloonTypes.push("banana");
-      } else if (rand < 0.85) {
-        balloonTypes.push("dog");
       } else {
-        balloonTypes.push("heart");
+        balloonTypes.push("dog");
       }
     }
 

@@ -6,7 +6,7 @@ interface BalloonProps {
   position: [number, number, number];
   color: string;
   scale?: number;
-  type?: "round" | "apple" | "banana" | "dog" | "heart";
+  type?: "round" | "apple" | "banana" | "dog";
 }
 
 const Balloon: React.FC<BalloonProps> = ({
@@ -150,42 +150,6 @@ const Balloon: React.FC<BalloonProps> = ({
           <mesh position={[0.3, 0.4, 0.6]}>
             <sphereGeometry args={[0.1, 8, 8]} />
             <meshStandardMaterial color="#000000" />
-          </mesh>
-        </group>
-      )}
-
-      {type === "heart" && (
-        <group castShadow receiveShadow>
-          {/* Heart shape using two spheres and a cone */}
-          <mesh position={[-0.5, 0.3, 0]} rotation={[0, 0, -0.5]}>
-            <sphereGeometry args={[0.7, 16, 16]} />
-            <meshStandardMaterial
-              color={color}
-              roughness={0.1}
-              metalness={0.2}
-              emissive={color}
-              emissiveIntensity={0.1}
-            />
-          </mesh>
-          <mesh position={[0.5, 0.3, 0]} rotation={[0, 0, 0.5]}>
-            <sphereGeometry args={[0.7, 16, 16]} />
-            <meshStandardMaterial
-              color={color}
-              roughness={0.1}
-              metalness={0.2}
-              emissive={color}
-              emissiveIntensity={0.1}
-            />
-          </mesh>
-          <mesh position={[0, -0.4, 0]} rotation={[Math.PI, 0, 0]}>
-            <coneGeometry args={[0.8, 1, 8]} />
-            <meshStandardMaterial
-              color={color}
-              roughness={0.1}
-              metalness={0.2}
-              emissive={color}
-              emissiveIntensity={0.1}
-            />
           </mesh>
         </group>
       )}
