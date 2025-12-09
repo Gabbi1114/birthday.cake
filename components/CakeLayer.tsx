@@ -188,7 +188,7 @@ const GoldDrip: React.FC<{ radius: number; height: number }> = ({
             {goldMaterial}
           </mesh>
           <mesh position={[0, -d.length, 0]}>
-             <sphereGeometry args={[d.width * 1.1, 20, 20]} />
+            <sphereGeometry args={[d.width * 1.1, 20, 20]} />
             {goldMaterial}
           </mesh>
         </group>
