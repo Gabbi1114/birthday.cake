@@ -220,7 +220,7 @@ const Scene: React.FC<SceneProps> = ({
           rotation={[-Math.PI / 2, 0, 0]}
           receiveShadow
         >
-          <circleGeometry args={[50, 32]} />
+          <circleGeometry args={[30, 32]} />
           <meshStandardMaterial
             color="#ffffff"
             roughness={0.9}
