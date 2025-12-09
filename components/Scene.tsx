@@ -103,7 +103,7 @@ const Scene: React.FC<SceneProps> = ({
     });
   }, [candlesBlownOut]);
 
-  // Generate random balloons with vibrant colors
+  // Generate random balloons with vibrant colors, positioned near table with collision avoidance
   const balloons = useMemo(() => {
     const colors = [
       "#FF6B6B", // Bright red
@@ -119,25 +119,56 @@ const Scene: React.FC<SceneProps> = ({
       "#BB8FCE", // Lavender
       "#85C1E2", // Sky blue
     ];
-    return Array.from({ length: 8 }).map((_, i) => {
-      // Position scattered around the back (semi-circle) to avoid blocking the front view
-      // Camera is at +Z, so we place balloons in the -Z region.
-      // Angles from PI (Left) to 2PI (Right) puts them in the back half.
-      const angle = Math.PI + Math.random() * Math.PI;
-
-      // Increased radius to accommodate larger size
-      const radius = 30 + Math.random() * 20;
-      const x = Math.cos(angle) * radius;
-      // The -10 shift combined with the angle restriction ensures they are well behind the main subject
-      const z = Math.sin(angle) * radius - 10;
-      const y = 5 + Math.random() * 15; // Floating height
-
-      const color = colors[Math.floor(Math.random() * colors.length)];
-      // Significantly increased scale range (3.5 to 6.0)
-      const scale = 3.5 + Math.random() * 2.5;
-
-      return { position: [x, y, z] as [number, number, number], color, scale };
-    });
+    
+    const balloonCount = 8;
+    const minDistance = 8; // Minimum distance between balloon centers to prevent overlap
+    const positions: Array<[number, number, number]> = [];
+    const scales: number[] = [];
+    const balloonColors: string[] = [];
+    
+    // Generate balloons with collision detection
+    for (let i = 0; i < balloonCount; i++) {
+      let attempts = 0;
+      let validPosition = false;
+      let x = 0, y = 0, z = 0;
+      
+      while (!validPosition && attempts < 100) {
+        // Position around the table (closer radius: 12-20)
+        const angle = Math.random() * Math.PI * 2; // Full circle around table
+        const radius = 12 + Math.random() * 8; // Closer to table
+        x = Math.cos(angle) * radius;
+        z = Math.sin(angle) * radius;
+        y = 3 + Math.random() * 12; // Floating height above table
+        
+        // Check collision with existing balloons
+        validPosition = true;
+        for (const existingPos of positions) {
+          const dx = x - existingPos[0];
+          const dy = y - existingPos[1];
+          const dz = z - existingPos[2];
+          const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+          
+          if (distance < minDistance) {
+            validPosition = false;
+            break;
+          }
+        }
+        
+        attempts++;
+      }
+      
+      if (validPosition) {
+        positions.push([x, y, z]);
+        scales.push(2.5 + Math.random() * 2.0); // Slightly smaller scale range
+        balloonColors.push(colors[Math.floor(Math.random() * colors.length)]);
+      }
+    }
+    
+    return positions.map((position, i) => ({
+      position,
+      color: balloonColors[i],
+      scale: scales[i],
+    }));
   }, []);
 
   // Standard font URL
