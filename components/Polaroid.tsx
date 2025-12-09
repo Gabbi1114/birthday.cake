@@ -57,30 +57,29 @@ const Polaroid: React.FC<PolaroidProps> = ({
         const targetPos = new THREE.Vector3(0, 10, 30);
         const targetScale = new THREE.Vector3(2.5, 2.5, 2.5);
 
-        // Smooth move to screen with frame-rate independence
-        const delta = state.clock.getDelta();
-        groupRef.current.position.lerp(targetPos, 0.08 + delta * 5);
-        groupRef.current.scale.lerp(targetScale, 0.08 + delta * 5);
+        // Move to screen
+        groupRef.current.position.lerp(targetPos, 0.05);
+        groupRef.current.scale.lerp(targetScale, 0.05);
 
         if (startSpin) {
           // --- SPIN PHASE ---
-          // Smooth spin 180 degrees to show back (Message)
+          // Spin 180 degrees to show back (Message)
           const targetRot = new THREE.Euler(0, Math.PI, 0);
 
           groupRef.current.rotation.x = THREE.MathUtils.lerp(
             groupRef.current.rotation.x,
             targetRot.x,
-            0.08 + delta * 5
+            0.05
           );
           groupRef.current.rotation.y = THREE.MathUtils.lerp(
             groupRef.current.rotation.y,
             targetRot.y,
-            0.08 + delta * 5
+            0.05
           );
           groupRef.current.rotation.z = THREE.MathUtils.lerp(
             groupRef.current.rotation.z,
             targetRot.z,
-            0.08 + delta * 5
+            0.05
           );
         } else {
           // --- ARRIVAL PHASE ---
@@ -91,17 +90,17 @@ const Polaroid: React.FC<PolaroidProps> = ({
           groupRef.current.rotation.x = THREE.MathUtils.lerp(
             groupRef.current.rotation.x,
             arrivalRot.x,
-            0.08 + delta * 5
+            0.05
           );
           groupRef.current.rotation.y = THREE.MathUtils.lerp(
             groupRef.current.rotation.y,
             arrivalRot.y,
-            0.08 + delta * 5
+            0.05
           );
           groupRef.current.rotation.z = THREE.MathUtils.lerp(
             groupRef.current.rotation.z,
             arrivalRot.z,
-            0.08 + delta * 5
+            0.05
           );
         }
       } else {
@@ -112,27 +111,26 @@ const Polaroid: React.FC<PolaroidProps> = ({
           target.multiplyScalar(1.05); // 5% grow on hover
         }
 
-        // Smooth return to initial transforms on the cake
-        const delta = state.clock.getDelta();
-        groupRef.current.position.lerp(initialPos, 0.12 + delta * 6);
+        // Return to initial transforms on the cake
+        groupRef.current.position.lerp(initialPos, 0.1);
 
         groupRef.current.rotation.x = THREE.MathUtils.lerp(
           groupRef.current.rotation.x,
           initialRot.x,
-          0.12 + delta * 6
+          0.1
         );
         groupRef.current.rotation.y = THREE.MathUtils.lerp(
           groupRef.current.rotation.y,
           initialRot.y,
-          0.12 + delta * 6
+          0.1
         );
         groupRef.current.rotation.z = THREE.MathUtils.lerp(
           groupRef.current.rotation.z,
           initialRot.z,
-          0.12 + delta * 6
+          0.1
         );
 
-        groupRef.current.scale.lerp(target, 0.12 + delta * 6);
+        groupRef.current.scale.lerp(target, 0.1);
       }
     }
   });
@@ -147,7 +145,7 @@ const Polaroid: React.FC<PolaroidProps> = ({
     >
       {/* Paper Frame */}
       {/* Origin is at bottom center to make leaning easier */}
-      <mesh position={[0, 1.75, 0]} receiveShadow castShadow>
+      <mesh position={[0, 1.75, 0]}>
         <boxGeometry args={[3, 3.5, 0.05]} />
         <meshStandardMaterial color="#ffffff" roughness={0.8} metalness={0.0} />
       </mesh>

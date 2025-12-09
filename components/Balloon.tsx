@@ -19,29 +19,13 @@ const Balloon: React.FC<BalloonProps> = ({ position, color, scale = 1 }) => {
   useFrame((state) => {
     if (groupRef.current) {
       const time = state.clock.elapsedTime + offset;
-      const delta = state.clock.getDelta();
 
-      // Smooth bobbing motion (Y-axis) with frame-rate independence
-      const targetY = position[1] + Math.sin(time * speed) * 0.5;
-      groupRef.current.position.y = THREE.MathUtils.lerp(
-        groupRef.current.position.y,
-        targetY,
-        0.1 + delta * 10
-      );
+      // Bobbing motion (Y-axis)
+      groupRef.current.position.y = position[1] + Math.sin(time * speed) * 0.5;
 
-      // Smooth swaying rotation
-      const targetRotZ = Math.sin(time * speed * 0.5) * range;
-      const targetRotX = Math.cos(time * speed * 0.3) * range;
-      groupRef.current.rotation.z = THREE.MathUtils.lerp(
-        groupRef.current.rotation.z,
-        targetRotZ,
-        0.1 + delta * 10
-      );
-      groupRef.current.rotation.x = THREE.MathUtils.lerp(
-        groupRef.current.rotation.x,
-        targetRotX,
-        0.1 + delta * 10
-      );
+      // Gentle swaying rotation
+      groupRef.current.rotation.z = Math.sin(time * speed * 0.5) * range;
+      groupRef.current.rotation.x = Math.cos(time * speed * 0.3) * range;
     }
   });
 
@@ -60,7 +44,7 @@ const Balloon: React.FC<BalloonProps> = ({ position, color, scale = 1 }) => {
       </mesh>
 
       {/* Balloon Body (Oval Sphere) */}
-      <mesh position={[0, 0, 0]} scale={[1, 1.25, 1]} castShadow receiveShadow>
+      <mesh position={[0, 0, 0]} scale={[1, 1.25, 1]}>
         <sphereGeometry args={[1, 16, 16]} />
         <meshStandardMaterial color={color} roughness={0.2} metalness={0.3} />
       </mesh>
