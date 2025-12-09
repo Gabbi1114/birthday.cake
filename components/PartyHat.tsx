@@ -40,8 +40,8 @@ const PartyHat: React.FC<PartyHatProps> = ({
       </mesh>
 
       {/* Decorative stripe - rotated 90 degrees */}
-      <mesh position={[0, 0.5, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[1.3, 0.15, 8, 16]} />
+      <mesh position={[0, -0.3, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[1, 0.15, 8, 16]} />
         <meshStandardMaterial color="#FFD700" roughness={0.2} metalness={0.3} />
       </mesh>
 
