@@ -121,49 +121,31 @@ const Scene: React.FC<SceneProps> = ({
     ];
 
     const balloonCount = 8;
-    const minDistance = 8; // Minimum distance between balloon centers to prevent overlap
+    const tableRadius = 30; // Table radius
+    const balloonRadius = tableRadius + 5; // Position balloons just outside table edge
+    const minDistance = 6; // Minimum distance between balloon centers to prevent overlap
     const positions: Array<[number, number, number]> = [];
     const scales: number[] = [];
     const balloonColors: string[] = [];
 
-    // Generate balloons with collision detection
+    // Distribute balloons evenly around the table perimeter
+    const angleStep = (Math.PI * 2) / balloonCount;
+    
     for (let i = 0; i < balloonCount; i++) {
-      let attempts = 0;
-      let validPosition = false;
-      let x = 0,
-        y = 0,
-        z = 0;
+      // Evenly spaced angles around the circle
+      const baseAngle = i * angleStep;
+      // Add slight random variation to angle for more natural look
+      const angle = baseAngle + (Math.random() - 0.5) * 0.3;
+      
+      // Position at consistent radius around table perimeter
+      const radius = balloonRadius + (Math.random() - 0.5) * 2; // Slight variation in radius
+      const x = Math.cos(angle) * radius;
+      const z = Math.sin(angle) * radius;
+      const y = 4 + Math.random() * 10; // Floating height above table
 
-      while (!validPosition && attempts < 100) {
-        // Position around the table (closer radius: 12-20)
-        const angle = Math.random() * Math.PI * 2; // Full circle around table
-        const radius = 12 + Math.random() * 8; // Closer to table
-        x = Math.cos(angle) * radius;
-        z = Math.sin(angle) * radius;
-        y = 3 + Math.random() * 12; // Floating height above table
-
-        // Check collision with existing balloons
-        validPosition = true;
-        for (const existingPos of positions) {
-          const dx = x - existingPos[0];
-          const dy = y - existingPos[1];
-          const dz = z - existingPos[2];
-          const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-
-          if (distance < minDistance) {
-            validPosition = false;
-            break;
-          }
-        }
-
-        attempts++;
-      }
-
-      if (validPosition) {
-        positions.push([x, y, z]);
-        scales.push(2.5 + Math.random() * 2.0); // Slightly smaller scale range
-        balloonColors.push(colors[Math.floor(Math.random() * colors.length)]);
-      }
+      positions.push([x, y, z]);
+      scales.push(2.5 + Math.random() * 2.0);
+      balloonColors.push(colors[Math.floor(Math.random() * colors.length)]);
     }
 
     return positions.map((position, i) => ({
