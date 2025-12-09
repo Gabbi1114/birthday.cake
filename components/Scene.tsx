@@ -142,7 +142,7 @@ const Scene: React.FC<SceneProps> = ({
         // Skip the front range by adding the excluded angle
         baseAngle += frontEndAngle - frontStartAngle;
       }
-      
+
       // Add slight random variation to angle for more natural look
       const angle = baseAngle + (Math.random() - 0.5) * 0.3;
 
