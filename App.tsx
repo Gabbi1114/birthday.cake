@@ -6,7 +6,7 @@ import { ViewMode } from "./types";
 const App: React.FC = () => {
   const [viewMode, setViewMode] = useState<ViewMode>(ViewMode.ORBIT);
   const [showUI, setShowUI] = useState<boolean>(true);
-  const [customText, setCustomText] = useState<string>("ALEXANDER");
+  const [customText, setCustomText] = useState<string>("АРИУНСАНАА");
 
   // Microphone & Candle State
   const [isListening, setIsListening] = useState(false);

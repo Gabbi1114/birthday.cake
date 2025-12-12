@@ -20,7 +20,7 @@ import { ViewMode } from "../types";
 
 // --- EDITABLE MESSAGE SECTION ---
 const MESSAGE_ON_POLAROID =
-  "Make a wish!\n\nMay your year be as\nbright as these stars.\n\nHappy Birthday!";
+  "Төрсөн өдрийн мэнд хүргэе!\n\nХайрт чамдаа маш\nмаш их хайртай шүү！\n\n2025。11。25";
 // --------------------------------
 
 // Component to handle camera transitions based on ViewMode
@@ -183,9 +183,17 @@ const Scene: React.FC<SceneProps> = ({
     }));
   }, []);
 
-  // Standard font URL
-  const fontUrl =
-    "https://cdn.jsdelivr.net/npm/three/examples/fonts/helvetiker_bold.typeface.json";
+  // Cyrillic-compatible font URL
+  // IMPORTANT: To display Mongolian Cyrillic characters correctly, you need to:
+  // 1. Go to https://gero3.github.io/facetype.js/
+  // 2. Download Roboto Bold from https://fonts.google.com/specimen/Roboto (select Bold weight)
+  // 3. Convert the .ttf file to typeface.json using the converter
+  // 4. Save it as "roboto_bold_cyrillic.typeface.json" in the public folder
+  // Note: Most Three.js example fonts don't support Cyrillic, so a custom font is required
+  const baseUrl = (import.meta as any).env?.BASE_URL || "/";
+  const localCyrillicFont =
+    `${baseUrl}roboto_bold_cyrillic.typeface.json`.replace("//", "/");
+  const fontUrl = localCyrillicFont;
 
   return (
     <Canvas
