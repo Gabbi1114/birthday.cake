@@ -1,13 +1,13 @@
-import React, { useState, useRef, useEffect } from 'react';
-import Scene from './components/Scene';
-import UIOverlay from './components/UIOverlay';
-import { ViewMode } from './types';
+import React, { useState, useRef, useEffect } from "react";
+import Scene from "./components/Scene";
+import UIOverlay from "./components/UIOverlay";
+import { ViewMode } from "./types";
 
 const App: React.FC = () => {
   const [viewMode, setViewMode] = useState<ViewMode>(ViewMode.ORBIT);
   const [showUI, setShowUI] = useState<boolean>(true);
-  const [customText, setCustomText] = useState<string>("ALEXANDER");
-  
+  const [customText, setCustomText] = useState<string>("АРИУНСАНАА");
+
   // Microphone & Candle State
   const [isListening, setIsListening] = useState(false);
   const [candlesBlownOut, setCandlesBlownOut] = useState(false);
@@ -18,7 +18,8 @@ const App: React.FC = () => {
   // Cleanup effect
   useEffect(() => {
     return () => {
-      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
+      if (animationFrameRef.current)
+        cancelAnimationFrame(animationFrameRef.current);
       if (audioContextRef.current) audioContextRef.current.close();
     };
   }, []);
@@ -28,79 +29,123 @@ const App: React.FC = () => {
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const audioCtx = new (window.AudioContext ||
+        (window as any).webkitAudioContext)();
       const analyser = audioCtx.createAnalyser();
       const microphone = audioCtx.createMediaStreamSource(stream);
-      
+
       microphone.connect(analyser);
-      analyser.fftSize = 256;
-      analyser.smoothingTimeConstant = 0.3;
-      
+      // Increased FFT size for better frequency resolution
+      analyser.fftSize = 512;
+      // Moderate smoothing to filter out brief noises while remaining responsive
+      analyser.smoothingTimeConstant = 0.5;
+
       audioContextRef.current = audioCtx;
       analyserRef.current = analyser;
       setIsListening(true);
-      
-      // If candles are already out, we can reset them or keep them out. 
+
+      // If candles are already out, we can reset them or keep them out.
       // For this flow, let's assume we are starting fresh or trying to blow them out.
       if (candlesBlownOut) setCandlesBlownOut(false);
 
       const bufferLength = analyser.frequencyBinCount;
-      const dataArray = new Uint8Array(bufferLength);
+      const frequencyData = new Uint8Array(bufferLength);
+      const timeData = new Uint8Array(analyser.fftSize);
+
+      // Track sustained blowing - require consistent high levels
+      let sustainedBlowCount = 0;
+      const requiredSustainedFrames = 2; // Must maintain for 2 frames (~33ms at 60fps)
 
       const detectBlow = () => {
         if (!analyserRef.current) return;
-        
-        analyserRef.current.getByteFrequencyData(dataArray);
-        
-        // Calculate average volume
-        let sum = 0;
-        for (let i = 0; i < bufferLength; i++) {
-          sum += dataArray[i];
-        }
-        const average = sum / bufferLength;
 
-        // Threshold detection for "blowing" 
-        // Adjusted to 140: slightly more sensitive than 160.
-        if (average > 140) {
-          setCandlesBlownOut(true);
-          // We can optionally stop listening here, or keep listening.
-          // Stopping saves resources.
-          setIsListening(false);
-          if (audioContextRef.current) {
-            audioContextRef.current.close();
-            audioContextRef.current = null;
+        analyserRef.current.getByteFrequencyData(frequencyData);
+        analyserRef.current.getByteTimeDomainData(timeData);
+
+        // Focus on lower frequencies (0-150 Hz range) where blowing sounds are strongest
+        // Lower frequencies are in the first ~30% of the array
+        const lowFreqRange = Math.floor(bufferLength * 0.3);
+        let lowFreqSum = 0;
+        let lowFreqMax = 0;
+        for (let i = 0; i < lowFreqRange; i++) {
+          lowFreqSum += frequencyData[i];
+          if (frequencyData[i] > lowFreqMax) lowFreqMax = frequencyData[i];
+        }
+        const lowFreqAverage = lowFreqSum / lowFreqRange;
+
+        // Calculate peak amplitude from time domain (more accurate for strong blows)
+        let timeMax = 0;
+        for (let i = 0; i < timeData.length; i++) {
+          const amplitude = Math.abs(timeData[i] - 128);
+          if (amplitude > timeMax) timeMax = amplitude;
+        }
+
+        // Require BOTH high low-frequency content AND high amplitude
+        // This filters out talking (which has higher frequencies) and weak sounds
+        // Lowered thresholds by 20% for easier blowing
+        const lowFreqThreshold = 112; // Reduced low-frequency requirement (20% lower)
+        const amplitudeThreshold = 36; // Reduced amplitude requirement (20% lower)
+
+        // Both conditions must be met for sustained blow detection
+        const isStrongBlow =
+          lowFreqAverage > lowFreqThreshold &&
+          lowFreqMax > 128 &&
+          timeMax > amplitudeThreshold;
+
+        if (isStrongBlow) {
+          sustainedBlowCount++;
+          // Require sustained blowing for multiple frames to avoid false triggers
+          if (sustainedBlowCount >= requiredSustainedFrames) {
+            setCandlesBlownOut(true);
+            // We can optionally stop listening here, or keep listening.
+            // Stopping saves resources.
+            setIsListening(false);
+            if (audioContextRef.current) {
+              audioContextRef.current.close();
+              audioContextRef.current = null;
+            }
+            return;
           }
-          return; 
+        } else {
+          // Reset counter if blow isn't sustained
+          sustainedBlowCount = Math.max(0, sustainedBlowCount - 1);
         }
 
         animationFrameRef.current = requestAnimationFrame(detectBlow);
       };
 
       detectBlow();
-
     } catch (err) {
       console.error("Microphone access denied or error:", err);
-      alert("Unable to access microphone. Please allow permissions to blow out candles.");
+      alert(
+        "Unable to access microphone. Please allow permissions to blow out candles."
+      );
       setIsListening(false);
     }
   };
+
+  // Static image path for Polaroid (place your PNG in public/polaroid-photo.png)
+  // Vite serves files from public folder - use BASE_URL from Vite's env
+  const baseUrl = (import.meta as any).env?.BASE_URL || "/";
+  const polaroidImageUrl = `${baseUrl}polaroid-photo.png`.replace("//", "/");
 
   return (
     <div className="relative w-full h-full bg-black">
       {/* 3D Scene Container */}
       <div className="absolute inset-0 z-0">
-        <Scene 
-          viewMode={viewMode} 
-          customText={customText} 
+        <Scene
+          viewMode={viewMode}
+          customText={customText}
           candlesBlownOut={candlesBlownOut}
+          polaroidImageUrl={polaroidImageUrl}
         />
       </div>
 
       {/* UI Overlay - Always rendered, manages its own internal visibility */}
       <div className="absolute inset-0 z-10 pointer-events-none">
-        <UIOverlay 
-          currentView={viewMode} 
-          onViewChange={setViewMode} 
+        <UIOverlay
+          currentView={viewMode}
+          onViewChange={setViewMode}
           onToggleUI={() => setShowUI(!showUI)}
           customText={customText}
           onTextChange={setCustomText}
